@@ -1,0 +1,11 @@
+{
+    "name": "leoknudsen/dxl-api",
+    "description": "WordPress API package for DXL",
+    "autoload": {
+        "psr-4": {
+            "DxlApi\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {}
+}
