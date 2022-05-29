@@ -3,6 +3,7 @@
 
     use DxlApi\Abstracts\AbstractRoute as Route;
     use DxlApi\Controllers\EventController;
+    use DxlApi\Controllers\LanEventController;
     
     if( !class_exists('EventRoutes') ) 
     {
@@ -34,6 +35,11 @@
                 register_rest_route($this->prefix, '/event/details', [
                     'methods' => \WP_REST_Server::READABLE,
                     'callback' => [new EventController, 'details']
+                ]);
+
+                register_rest_route($this->prefix, '/event/lan/details/tournaments/detail', [
+                    'methods' => \WP_REST_Server::READABLE,
+                    'callback' => [new LanEventController, 'tournament']
                 ]);
 
                 // participate event endpoint
