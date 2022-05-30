@@ -92,6 +92,7 @@
                 $participants = $this->participantRepository->findByEvent($tournament->id);
 
                 $participants_data = [];
+                
                 foreach ( $participants as $p => $participant ) {
                     $member = $this->memberRepository->find($participant->member_id);
                     $participants_data[$p] = [
