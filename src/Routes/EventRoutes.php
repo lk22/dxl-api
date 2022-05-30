@@ -25,7 +25,6 @@
             public function register_endpoints()
             {
                 // event participate endpoint
-                
                 register_rest_route($this->prefix, '/event/list', [
                     'methods' => \WP_REST_Server::READABLE,
                     'callback' => [new EventController, 'index']

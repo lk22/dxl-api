@@ -19,10 +19,30 @@
     {
         class LanEventController extends Controller 
         {
+            /**
+             * LAN Repository
+             *
+             * @var DxlEvents\Classes\Repositories\LanRepository
+             */
             protected $lanRepository;
+
+            /**
+             * Tournament repository
+             *
+             * @var DxlEvents\Classes\Repositories
+             */
             protected $tournamentRepository;
+
+            /**
+             * Api service
+             *
+             * @var DxlApi\Services\ApiService
+             */
             protected $ApiService;
 
+            /**
+             * Constructor
+             */
             public function __construct() 
             {
                 $lanRepository = new LanRepository();
@@ -30,19 +50,26 @@
                 $apiService = new ApiService();
             }
 
+            /**
+             * fethcing lan attached tournament information
+             *
+             * @api /event/lan/details/tournaments/detail
+             * @param \WP_REST_Request $request
+             * @return void
+             */
             public function tournament(\WP_REST_Request $request) 
             {
                 $eventTournament = $request->get_params()["tournament"];
                 $event = $request->get_params()["event"];
 
-                $tournament = $this->tournamentRepository->
+                $tournament = $this->tournamentRepository   
                     ->select()
                     ->where('id', $eventTournament)
                     ->whereAnd('has_lan', 1)
                     ->whereAnd('lan_id', $event)
                     ->getRow();
 
-                return $this->ApiService->success($tournament);
+                return $this->ApiService->success($tournament ?? []);
             }
         }
     }
