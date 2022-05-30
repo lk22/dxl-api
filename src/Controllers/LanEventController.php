@@ -106,6 +106,7 @@
                     "starttime" => date("H:i", $tournament->starttime),
                     "end" => date("d F Y", $tournament->end),
                     "endtime" => date("H:i", $tournament->endtime),
+                    "description" => $tournament->description,
                     "participants_count" => $tournament->participants_count,
                     "participants" => $participants_data
                 ]);
