@@ -24,7 +24,7 @@
              * @return void
              */
             public function success($response) {
-                return rest_ensure_response(["code" => 200, "message" => $response]);
+                return rest_ensure_response(["code" => 200, "data" => ["response" => $response]]);
             }
 
             /**

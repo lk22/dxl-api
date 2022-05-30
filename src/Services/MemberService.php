@@ -22,7 +22,8 @@
             /**
              * Validate member existance from giving information
              *
-             * @param [type] ...$member
+             * @param string $email
+             * @param string $gamertag
              * @return void
              */
             public function validateParticipant(string $email, string $gamertag) {

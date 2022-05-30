@@ -8,6 +8,8 @@
      */
     use DxlEvents\Classes\Repositories\LanRepository;
     use DxlEvents\Classes\Repositories\TournamentRepository;
+    use DxlEvents\Classes\Repositories\ParticipantRepository;
+    use DxlMembership\Classes\Repositories\MemberRepository;
 
     use DxlApi\Services\ApiService;
 
@@ -29,25 +31,41 @@
             /**
              * Tournament repository
              *
-             * @var DxlEvents\Classes\Repositories
+             * @var DxlEvents\Classes\Repositories\TournamentRepository
              */
             protected $tournamentRepository;
+
+            /**
+             * participant repository
+             *
+             * @var DxlEvents\Classes\Repositories\ParticipantRepository
+             */
+            protected $participantRepository;
+
+            /**
+             * participant repository
+             *
+             * @var DxlMembershipts\Classes\Repositories\MemberRepository
+             */
+            protected $memberRepository;
 
             /**
              * Api service
              *
              * @var DxlApi\Services\ApiService
              */
-            protected $ApiService;
+            protected $apiService;
 
             /**
              * Constructor
              */
             public function __construct() 
             {
-                $lanRepository = new LanRepository();
-                $tournamentRepository = new TournamentRepository();
-                $apiService = new ApiService();
+                $this->lanRepository = new LanRepository();
+                $this->tournamentRepository = new TournamentRepository();
+                $this->participantRepository = new ParticipantRepository();
+                $this->memberRepository = new MemberRepository();
+                $this->api = new ApiService();
             }
 
             /**
@@ -62,6 +80,8 @@
                 $eventTournament = $request->get_params()["tournament"];
                 $event = $request->get_params()["event"];
 
+                // return $event;
+
                 $tournament = $this->tournamentRepository   
                     ->select()
                     ->where('id', $eventTournament)
@@ -69,7 +89,26 @@
                     ->whereAnd('lan_id', $event)
                     ->getRow();
 
-                return $this->ApiService->success($tournament ?? []);
+                $participants = $this->participantRepository->findByEvent($tournament->id);
+
+                $participants_data = [];
+                foreach ( $participants as $p => $participant ) {
+                    $member = $this->memberRepository->find($participant->member_id);
+                    $participants_data[$p] = [
+                        "name" => $member->name,
+                        "gamertag" => $member->gamertag,
+                    ];
+                }
+
+                return $this->api->success([
+                    "title" => $tournament->title,
+                    "start" => date("d F Y", $tournament->start),
+                    "starttime" => date("H:i", $tournament->starttime),
+                    "end" => date("d F Y", $tournament->end),
+                    "endtime" => date("H:i", $tournament->endtime),
+                    "participants_count" => $tournament->participants_count,
+                    "participants" => $participants_data
+                ]);
             }
         }
     }
