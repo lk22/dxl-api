@@ -9,7 +9,15 @@
     use DxlEvents\Classes\Repositories\LanRepository;
     use DxlEvents\Classes\Repositories\TournamentRepository;
     use DxlEvents\Classes\Repositories\ParticipantRepository;
+    use DxlEvents\Classes\Repositories\LanParticipantRepository;
     use DxlMembership\Classes\Repositories\MemberRepository;
+
+    use DxlApi\Services\EventService;
+
+    /**
+     * Exceptions
+     */
+    use DxlEvents\Classes\Exceptions\AllreadyParticipatedException;
 
     use DxlApi\Services\ApiService;
 
@@ -43,6 +51,13 @@
             protected $participantRepository;
 
             /**
+             * LAN participant repository
+             *
+             * @var DxlEvents\Classes\Repositories\LanParticipantRepository
+             */
+            protected $lanParticipantRepository;
+
+            /**
              * participant repository
              *
              * @var DxlMembershipts\Classes\Repositories\MemberRepository
@@ -64,6 +79,7 @@
                 $this->lanRepository = new LanRepository();
                 $this->tournamentRepository = new TournamentRepository();
                 $this->participantRepository = new ParticipantRepository();
+                $this->lanParticipantRepository = new LanParticipantRepository();
                 $this->memberRepository = new MemberRepository();
                 $this->api = new ApiService();
             }
@@ -111,6 +127,57 @@
                     "participants_count" => $tournament->participants_count,
                     "participants" => $participants_data
                 ]);
+            }
+
+            /**
+             * LAN event participate API
+             *
+             * @param \WP_REST_Request $request
+             * @return void
+             */
+            public function participate(\WP_REST_Request $request)
+            {
+                // TODO: participate the member, 
+                // TODO: send participated mail to participant
+                // TODO: send mail to event manager about the participant
+                
+                $eventService = new EventService();
+
+                // return gettype($request->get_param("gamertag"));
+
+                $breakfast = ($request->get_param("breakfast") == "on") ? 1 : 0;
+                $dinner_friday = ($request->get_param("dinner_friday") == "on") ? 1 : 0;
+                $dinner_saturday = ($request->get_param("dinner_saturday") == "on") ? 1 : 0;
+
+                $participantExists = $eventService->getExistingParticipant($request->get_param("event"), $request->get_param("gamertag"));
+
+                if( $participantExists ) {
+                    return rest_ensure_response(new \WP_HTTP_Response('Du er allerede tilmeldt denne begivenhed', 409));
+                }
+
+                $member = $this->memberRepository->select()->where('gamertag', $request->get_param('gamertag'))->getRow();
+
+                $seats_updated = $eventService->removeAvailableSeat($request->get_param("event"));
+
+                $participant = $this->lanParticipantRepository->create([
+                    "event_id" => $request->get_param('event'),
+                    "member_id" => $member->id,
+                    "name" => $member->name,
+                    "gamertag" => $member->gamertag,
+                    "has_saturday_breakfast" => $breakfast,
+                    "has_saturday_breakfast" => $breakfast,
+                    "has_sunday_breakfast" => $breakfast,
+                    "has_sunday_breakfast" => $breakfast,
+                    "has_friday_lunch" => $dinner_friday,
+                    "has_saturday_dinner" => $dinner_saturday,
+                    "participated" => time()
+                ]);
+
+                if( !$participant ) {
+                    return $this->api->conflict("Der skete en fejl, kunne ikke tilmelde dig begivenheden");
+                }
+
+                return $this->api->created("du er nu tilmeldt begivenheden, du modtager en mail fra os vedr begivenheden");
             }
         }
     }

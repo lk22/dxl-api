@@ -36,12 +36,19 @@
                     'callback' => [new EventController, 'details']
                 ]);
 
+                // lan event tournament details
                 register_rest_route($this->prefix, '/event/lan/details/tournaments/detail', [
                     'methods' => \WP_REST_Server::READABLE,
                     'callback' => [new LanEventController, 'tournament']
                 ]);
 
-                // participate event endpoint
+                // participate lan event
+                register_rest_route($this->prefix, '/event/lan/participate', [
+                    'methods' => \WP_REST_Server::CREATABLE,
+                    'callback' => [new LanEventController, 'participate']
+                ]);
+
+                // participate training or tournament event endpoint
                 register_rest_route($this->prefix, '/event/participate', [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => [new EventController, 'participate']

@@ -7,6 +7,14 @@
     {
         class ApiService implements ServiceInterface
         {
+
+            const HTTP_STATUS_CODE_OK = 200;
+            const HTTP_STATUS_CODE_CREATED = 201;
+            const HTTP_STATUS_CODE_NOT_FOUND = 404;
+            const HTTP_STATUS_CODE_FORBIDDEN = 403;
+            const HTTP_STATUS_CODE_UNATHORIZED = 401;
+            const HTTP_STATUS_CODE_CONFLICT = 409;
+
             public function validate($request): bool {
                 foreach($request->get_params() as $key => $param) {
                     if( !isset($param[$key]) ) {
@@ -24,7 +32,7 @@
              * @return void
              */
             public function success($response) {
-                return rest_ensure_response(["code" => 200, "data" => ["response" => $response]]);
+                return rest_ensure_response(["code" => self::HTTP_STATUS_CODE_OK, "data" => ["response" => $response]]);
             }
 
             /**
@@ -34,7 +42,7 @@
              * @param integer $code
              * @return void
              */
-            public function created($created, $code = 201)
+            public function created($created, $code = self::HTTP_STATUS_CODE_CREATED)
             {
                 return rest_ensure_response([
                     "code" => $code,
@@ -48,8 +56,8 @@
              * @param integer $code
              * @return void
              */
-            public function not_found(int $code = 404) {
-                return new \WP_Error($code, "Rssource not found");
+            public function not_found(int $code = self::HTTP_STATUS_CODE_NOT_FOUND) {
+                return new \WP_HTTP_Response("Ressource not found", $code);
             }
 
             /**
@@ -60,8 +68,9 @@
              * @param integer $code
              * @return void
              */
-            public function forbidden($response = "Forbidden request", ?array $data = [], int $code = 403) {
-                return new \WP_Error($code, $response, $data);
+            public function forbidden($response = "Forbidden request", ?array $data = [], int $code = self::HTTP_STATUS_CODE_FORBIDDEN) {
+                return new \WP_HTTP_Response($response, $code);
+                // return new \WP_Error($code, $response, $data);
             } 
 
             /**
@@ -71,8 +80,30 @@
              * @param integer $code
              * @return void
              */
-            public function unauthorized(?array $data = [], int $code = 401) {
-                return new \WP_Error($code, "Unauthorized request catched, you are not allowed to perform this action", $data);
+            public function unauthorized(?array $data = [], int $code = self::HTTP_STATUS_CODE_UNATHORIZED) {
+                return new WP_HTTP_Response("Unauthorized request catched, you are not allowed to perform this action", $code);
+            }
+
+            /**
+             * Return conflict status
+             *
+             * @param string $response
+             * @param [type] $code
+             * @return void
+             */
+            public function conflict(string $response = "could not perform your request", int $code = self::HTTP_STATUS_CODE_CONFLICT) {
+                return new WP_HTTP_Response("Conflict, " . $response, $code);
+            }
+
+            /**
+             * return error response
+             *
+             * @param array|null $data
+             * @param integer $code
+             * @return void
+             */
+            public function error(?array $data = [], int $code = 500) {
+                return new \WP_Error($code, "Something went wrong", $data);
             }
         }
     }
