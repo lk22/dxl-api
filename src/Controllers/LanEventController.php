@@ -157,8 +157,7 @@
 
                 $member = $this->memberRepository->select()->where('gamertag', $request->get_param('gamertag'))->getRow();
 
-                $seats_updated = $eventService->removeAvailableSeat($request->get_param("event"));
-
+                
                 $participant = $this->lanParticipantRepository->create([
                     "event_id" => $request->get_param('event'),
                     "member_id" => $member->id,
@@ -172,10 +171,12 @@
                     "has_saturday_dinner" => $dinner_saturday,
                     "participated" => time()
                 ]);
-
+                
                 if( !$participant ) {
                     return $this->api->conflict("Der skete en fejl, kunne ikke tilmelde dig begivenheden");
                 }
+                
+                $seats_updated = $eventService->removeAvailableSeat($request->get_param("event"));
 
                 return $this->api->created("du er nu tilmeldt begivenheden, du modtager en mail fra os vedr begivenheden");
             }
