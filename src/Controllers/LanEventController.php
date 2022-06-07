@@ -13,6 +13,7 @@
     use DxlMembership\Classes\Repositories\MemberRepository;
 
     use DxlApi\Services\EventService;
+    use DxlApi\Services\MemberService;
 
     /**
      * Exceptions
@@ -137,11 +138,11 @@
              */
             public function participate(\WP_REST_Request $request)
             {
-                // TODO: participate the member, 
                 // TODO: send participated mail to participant
                 // TODO: send mail to event manager about the participant
                 
                 $eventService = new EventService();
+                $memberService = new MemberService();
 
                 // return gettype($request->get_param("gamertag"));
 
@@ -152,12 +153,13 @@
                 $participantExists = $eventService->getExistingParticipant($request->get_param("event"), $request->get_param("gamertag"));
 
                 if( $participantExists ) {
-                    return rest_ensure_response(new \WP_HTTP_Response('Du er allerede tilmeldt denne begivenhed', 409));
+                    return $this->api->conflict("Du er allerede tilmeldt denne begivenhed");
                 }
 
-                $member = $this->memberRepository->select()->where('gamertag', $request->get_param('gamertag'))->getRow();
+                $gamertag = $request->get_param("gamertag");
 
-                
+                $member = $this->memberRepository->select()->where('gamertag', "'$gamertag'")->getRow();
+
                 $participant = $this->lanParticipantRepository->create([
                     "event_id" => $request->get_param('event'),
                     "member_id" => $member->id,
@@ -175,7 +177,7 @@
                 if( !$participant ) {
                     return $this->api->conflict("Der skete en fejl, kunne ikke tilmelde dig begivenheden");
                 }
-                
+
                 $seats_updated = $eventService->removeAvailableSeat($request->get_param("event"));
 
                 return $this->api->created("du er nu tilmeldt begivenheden, du modtager en mail fra os vedr begivenheden");
