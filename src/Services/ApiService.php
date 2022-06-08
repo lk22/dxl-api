@@ -81,7 +81,7 @@
              * @return void
              */
             public function unauthorized(?array $data = [], int $code = self::HTTP_STATUS_CODE_UNATHORIZED) {
-                return new WP_HTTP_Response("Unauthorized request catched, you are not allowed to perform this action", $code);
+                return new \WP_HTTP_Response("Unauthorized request catched, you are not allowed to perform this action", $code);
             }
 
             /**
@@ -92,7 +92,7 @@
              * @return void
              */
             public function conflict(string $response = "could not perform your request", int $code = self::HTTP_STATUS_CODE_CONFLICT) {
-                return new WP_HTTP_Response("Conflict, " . $response, $code);
+                return new \WP_HTTP_Response("Conflict, " . $response, $code);
             }
 
             /**

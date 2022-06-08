@@ -143,9 +143,7 @@
                 
                 $eventService = new EventService();
                 $memberService = new MemberService();
-
-                // return gettype($request->get_param("gamertag"));
-
+                
                 $breakfast = ($request->get_param("breakfast") == "on") ? 1 : 0;
                 $dinner_friday = ($request->get_param("dinner_friday") == "on") ? 1 : 0;
                 $dinner_saturday = ($request->get_param("dinner_saturday") == "on") ? 1 : 0;
@@ -181,6 +179,36 @@
                 $seats_updated = $eventService->removeAvailableSeat($request->get_param("event"));
 
                 return $this->api->created("du er nu tilmeldt begivenheden, du modtager en mail fra os vedr begivenheden");
+            }
+
+            /**
+             * Participate lan tournament
+             *
+             * @param \WP_REST_Request $request
+             * @return void
+             */
+            public function participateTournament(\WP_REST_Request $request)
+            {
+                $tournament = $request->get_param('tournament');
+                $member = $request->get_param('member');
+                $event = $request->get_param('event');
+
+                $participant = $this->memberRepository->find($member);
+
+                $participated = $this->participantRepository->create([
+                    "member_id" => $particpant->id,
+                    "name" => $participant->name,
+                    "gamertag" => $participant->gamertag,
+                    "email" => $participant->email,
+                    "event_id" => $tournament,
+                    "lan_id" => $event
+                ]);
+
+                if( !$participated ) {
+                    return $this->api->conflict('Noget gik galt, kunne ikke deltage i turneringen');
+                }
+
+                return $this->api->created("Du er nu tilmeldt turneringen");
             }
         }
     }
