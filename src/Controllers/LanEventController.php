@@ -143,12 +143,15 @@
                 
                 $eventService = new EventService();
                 $memberService = new MemberService();
-                
+
                 $breakfast = ($request->get_param("breakfast") == "on") ? 1 : 0;
                 $dinner_friday = ($request->get_param("dinner_friday") == "on") ? 1 : 0;
                 $dinner_saturday = ($request->get_param("dinner_saturday") == "on") ? 1 : 0;
 
-                $participantExists = $eventService->getExistingParticipant($request->get_param("event"), $request->get_param("gamertag"));
+                $participantExists = $eventService->getExistingParticipant(
+                    $request->get_param("event"), 
+                    $request->get_param("gamertag")
+                );
 
                 if( $participantExists ) {
                     return $this->api->conflict("Du er allerede tilmeldt denne begivenhed");
@@ -182,10 +185,52 @@
             }
 
             /**
-             * Participate lan tournament
+             * Unparticipate LAN event 
              *
              * @param \WP_REST_Request $request
              * @return void
+             */
+            public function unparticipate(\WP_REST_Request $request) 
+            {
+                $event = $requst->get_param('event');
+                $member = $request->get_param('member');
+
+                $member = $this->memberRepository->find($member);
+                
+                $tournaments = $this->tournamentRepository->select()->where('lan_id', $event)->get();
+                foreach($tournaments as $tournament) {
+                    $pcount = $this->tournamentRepository
+                        ->select(['participant_count'])
+                        ->where('id', $tournament->id)
+                        ->getRow();
+
+                    $participant = $this->participantRepository
+                        ->select()
+                        ->where('member_id', $member)
+                        ->andWhere('id', $tournament->id)
+                        ->getRow();
+
+                    // if the participant exists on the tournament, remove the participant
+                    if( $participant ) {
+                        $this->participantRepository->delete($participant->id);
+
+                        $this->tournamentRepository->update(
+                            ['participants_count' => $tournament],
+                            $participant->id
+                        );
+                    }
+                }
+
+                $this->lanParticipantRepository->removeFromEvent($member->id, $event);
+
+                return $this->api->success('Du er nu fjernet fra deltagerlisten');
+            }
+
+            /**
+             * Participate lan tournament
+             *
+             * @param \WP_REST_Request $request
+             * @return void 
              */
             public function participateTournament(\WP_REST_Request $request)
             {
@@ -193,16 +238,26 @@
                 $member = $request->get_param('member');
                 $event = $request->get_param('event');
 
-                $participant = $this->memberRepository->find($member);
+                $participant = $this->memberRepository->select()->where('user_id', $member)->getRow();
+                $tournament_participants = $this->tournamentRepository
+                    ->select(['participants_count'])
+                    ->where('id', $tournament)
+                    ->getRow();
+
+                // return $participant; 
 
                 $participated = $this->participantRepository->create([
-                    "member_id" => $particpant->id,
+                    "member_id" => $participant->id,
                     "name" => $participant->name,
                     "gamertag" => $participant->gamertag,
                     "email" => $participant->email,
                     "event_id" => $tournament,
                     "lan_id" => $event
                 ]);
+
+                $this->tournamentRepository->update([
+                    "participants_count" => $tournament_participants->participants_count + 1
+                ], $tournament);
 
                 if( !$participated ) {
                     return $this->api->conflict('Noget gik galt, kunne ikke deltage i turneringen');
