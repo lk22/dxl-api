@@ -12,16 +12,24 @@
     use DxlEvents\Classes\Repositories\LanParticipantRepository;
     use DxlMembership\Classes\Repositories\MemberRepository;
 
+    /**
+     * Services
+     */
     use DxlApi\Services\EventService;
     use DxlApi\Services\MemberService;
+    use DxlApi\Services\ApiService;
 
+    /**
+     * Emails
+     */
+    use DxlEvents\Classes\Mails\EventParticipatedMail;
+    use DxlEvents\Classes\Mails\LanEventParticipatedMail;
     /**
      * Exceptions
      */
     use DxlEvents\Classes\Exceptions\AllreadyParticipatedException;
 
-    use DxlApi\Services\ApiService;
-
+    
     if( !defined('ABSPATH') ) {
         exit;
     }
@@ -153,6 +161,7 @@
                     $request->get_param("gamertag")
                 );
 
+                $lanEvent = $this->lanRepository->find($request->get_param('event'));
                 if( $participantExists ) {
                     return $this->api->conflict("Du er allerede tilmeldt denne begivenhed");
                 }
@@ -178,6 +187,16 @@
                 if( !$participant ) {
                     return $this->api->conflict("Der skete en fejl, kunne ikke tilmelde dig begivenheden");
                 }
+
+                $participantMail = (new EventParticipatedMail($member, $lanEvent))
+                    ->setSubject('Tilmelding ' . $member->gamertag . ')')
+                    ->setReciever($member->email)
+                    ->send();
+
+                $participantNotification = (new LanEventParticipatedMail($member, $lanEvent))
+                    ->setSubject("Ny tilmelding, " . $member->gamertag)
+                    ->setReciever($member->email)
+                    ->send();
 
                 $seats_updated = $eventService->removeAvailableSeat($request->get_param("event"));
 
