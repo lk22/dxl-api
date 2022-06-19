@@ -148,9 +148,11 @@
             {
                 // TODO: send participated mail to participant
                 // TODO: send mail to event manager about the participant
-                
+                // return $request->get_params();
                 $eventService = new EventService();
                 $memberService = new MemberService();
+
+                $seatedMembers = $request->get_param('members');
 
                 $breakfast = ($request->get_param("breakfast") == "on") ? 1 : 0;
                 $dinner_friday = ($request->get_param("dinner_friday") == "on") ? 1 : 0;
@@ -170,35 +172,43 @@
 
                 $member = $this->memberRepository->select()->where('gamertag', "'$gamertag'")->getRow();
 
-                $participant = $this->lanParticipantRepository->create([
-                    "event_id" => $request->get_param('event'),
-                    "member_id" => $member->id,
-                    "name" => $member->name,
-                    "gamertag" => $member->gamertag,
-                    "has_saturday_breakfast" => $breakfast,
-                    "has_saturday_breakfast" => $breakfast,
-                    "has_sunday_breakfast" => $breakfast,
-                    "has_sunday_breakfast" => $breakfast,
-                    "has_friday_lunch" => $dinner_friday,
-                    "has_saturday_dinner" => $dinner_saturday,
-                    "participated" => time()
-                ]);
+                // $participant = $this->lanParticipantRepository->create([
+                //     "event_id" => $request->get_param('event'),
+                //     "member_id" => $member->id,
+                //     "name" => $member->name,
+                //     "gamertag" => $member->gamertag,
+                //     "has_saturday_breakfast" => $breakfast,
+                //     "has_saturday_breakfast" => $breakfast,
+                //     "has_sunday_breakfast" => $breakfast,
+                //     "has_sunday_breakfast" => $breakfast,
+                //     "has_friday_lunch" => $dinner_friday,
+                //     "has_saturday_dinner" => $dinner_saturday,
+                //     "participated" => time()
+                // ]);
                 
-                if( !$participant ) {
-                    return $this->api->conflict("Der skete en fejl, kunne ikke tilmelde dig begivenheden");
-                }
+                // if( !$participant ) {
+                //     return $this->api->conflict("Der skete en fejl, kunne ikke tilmelde dig begivenheden");
+                // }
 
-                $participantMail = (new EventParticipatedMail($member, $lanEvent))
-                    ->setSubject('Tilmelding ' . $member->gamertag . ')')
+                $participantMail = (new EventParticipatedMail(
+                    $member, 
+                    $lanEvent, 
+                    $seatedMembers, 
+                    $request->get_param('message')
+                ))->setSubject('Tilmelding ' . $member->gamertag . ')')
                     ->setReciever($member->email)
                     ->send();
 
-                $participantNotification = (new LanEventParticipatedMail($member, $lanEvent))
-                    ->setSubject("Ny tilmelding, " . $member->gamertag)
+                $participantNotification = (new LanEventParticipatedMail(
+                    $member, 
+                    $lanEvent, 
+                    $seatedMembers, 
+                    $request->get_param('message')
+                ))->setSubject("Ny tilmelding, " . $member->gamertag)
                     ->setReciever($member->email)
                     ->send();
 
-                $seats_updated = $eventService->removeAvailableSeat($request->get_param("event"));
+                // $seats_updated = $eventService->removeAvailableSeat($request->get_param("event"));
 
                 return $this->api->created("du er nu tilmeldt begivenheden, du modtager en mail fra os vedr begivenheden");
             }
