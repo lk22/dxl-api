@@ -24,6 +24,9 @@
      */
     use DxlEvents\Classes\Mails\EventParticipatedMail;
     use DxlEvents\Classes\Mails\LanEventParticipatedMail;
+    use DxlEvents\Classes\Mails\LanEventUnparticipated;
+    use DxlEvents\Classes\Mails\EventUnparticipated;
+
     /**
      * Exceptions
      */
@@ -221,12 +224,13 @@
              */
             public function unparticipate(\WP_REST_Request $request) 
             {
-                $event = $requst->get_param('event');
+                $eventId = $requst->get_param('event');
                 $member = $request->get_param('member');
 
                 $member = $this->memberRepository->find($member);
+                $event = $this->lanRepository->find($eventId);
                 
-                $tournaments = $this->tournamentRepository->select()->where('lan_id', $event)->get();
+                $tournaments = $this->tournamentRepository->select()->where('lan_id', $eventId)->get();
                 foreach($tournaments as $tournament) {
                     $pcount = $this->tournamentRepository
                         ->select(['participant_count'])
@@ -250,7 +254,18 @@
                     }
                 }
 
-                $this->lanParticipantRepository->removeFromEvent($member->id, $event);
+                $this->lanParticipantRepository->removeFromEvent($member->id, $eventId);
+
+                $unparticipatedNotification = (new LanEventUnparticipated($event, $member))
+                    ->setSubject('Afmelding, ' . $member->name)
+                    ->setReciever('medlemsskab@danishxboxleague.dk')
+                    ->send();
+
+                // notify the participant that the unparticipation is recieved
+                $unparticipatedNotification = (new EventUnparticipated($event, $member))
+                    ->setSubject('Afmelding, ' . $event->title)
+                    ->setReciever($member->email)
+                    ->send();
 
                 return $this->api->success('Du er nu fjernet fra deltagerlisten');
             }
