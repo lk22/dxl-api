@@ -256,6 +256,7 @@
 
                 $this->lanParticipantRepository->removeFromEvent($member->id, $eventId);
 
+                // notify event manager
                 $unparticipatedNotification = (new LanEventUnparticipated($event, $member))
                     ->setSubject('Afmelding, ' . $member->name)
                     ->setReciever('medlemsskab@danishxboxleague.dk')

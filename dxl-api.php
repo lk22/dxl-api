@@ -1,4 +1,6 @@
-<?php 
+<?php
+// anynomous class
+
 
 /**
  * Plugin Name: DXL API Module
@@ -14,6 +16,7 @@
  require_once dirname(__FILE__) . "/vendor/autoload.php";
  require dirname(__FILE__) . "/src/Api.php";
 
+ 
 new Api();
 
 ?>
