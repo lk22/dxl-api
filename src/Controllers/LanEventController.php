@@ -224,23 +224,32 @@
              */
             public function unparticipate(\WP_REST_Request $request) 
             {
-                $eventId = $requst->get_param('event');
-                $member = $request->get_param('member');
+                $eventId    = $request->get_param('event');
+                $memberId   = $request->get_param('member');
+                $message    = $request->get_param('message') ?? "";
 
-                $member = $this->memberRepository->find($member);
+                $member = $this->memberRepository
+                    ->select()
+                    ->where('id', $memberId)
+                    ->getRow();
+
                 $event = $this->lanRepository->find($eventId);
                 
-                $tournaments = $this->tournamentRepository->select()->where('lan_id', $eventId)->get();
+                $tournaments = $this->tournamentRepository
+                    ->select()
+                    ->where('lan_id', $eventId)
+                    ->get();
+
                 foreach($tournaments as $tournament) {
                     $pcount = $this->tournamentRepository
-                        ->select(['participant_count'])
+                        ->select(['participants_count'])
                         ->where('id', $tournament->id)
                         ->getRow();
 
                     $participant = $this->participantRepository
                         ->select()
-                        ->where('member_id', $member)
-                        ->andWhere('id', $tournament->id)
+                        ->where('member_id', $member->id)
+                        ->whereAnd('id', $tournament->id)
                         ->getRow();
 
                     // if the participant exists on the tournament, remove the participant
@@ -254,10 +263,13 @@
                     }
                 }
 
-                $this->lanParticipantRepository->removeFromEvent($member->id, $eventId);
+                $this->lanParticipantRepository->delete($eventId, [
+                    'event_id' => $eventId,
+                    'member_id' => $memberId
+                ]);
 
                 // notify event manager
-                $unparticipatedNotification = (new LanEventUnparticipated($event, $member))
+                $unparticipatedNotification = (new LanEventUnparticipated($event, $member, $message))
                     ->setSubject('Afmelding, ' . $member->name)
                     ->setReciever('medlemsskab@danishxboxleague.dk')
                     ->send();

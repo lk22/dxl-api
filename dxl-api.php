@@ -1,6 +1,4 @@
 <?php
-// anynomous class
-
 
 /**
  * Plugin Name: DXL API Module
