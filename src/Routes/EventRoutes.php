@@ -30,6 +30,12 @@
                     'callback' => [new EventController, 'index']
                 ]);
 
+                // event search endpoint
+                register_rest_route($this->prefix, '/event/search', [
+                    'methods' => \WP_REST_Server::READABLE,
+                    'callback' => [new EventController, 'search']
+                ]);
+
                 // event details endpoint
                 register_rest_route($this->prefix, '/event/details', [
                     'methods' => \WP_REST_Server::READABLE,

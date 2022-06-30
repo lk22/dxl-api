@@ -17,6 +17,7 @@
     use DxlApi\Services\ApiService;
     use DxlApi\Services\RequestService;
     use DxlApi\Services\MemberService;
+    use DxlApi\Services\EventService;
 
     if( !class_exists('EventController') ) 
     {
@@ -51,6 +52,8 @@
              */
             public $ApiService;
 
+            public $eventService;
+
             /**
              * Constructor
              */
@@ -60,6 +63,7 @@
                 $this->tournamentRepository = new TournamentRepository();
                 $this->trainingRepository = new TrainingRepository();
                 $this->api = new ApiService();
+                $this->eventService = new EventService();
             }
 
             /**
@@ -104,8 +108,23 @@
              * @param \WP_REST_Request $request
              * @return void
              */
-            public function details(\WP_REST_Request $request) {
+            public function details(\WP_REST_Request $request) 
+            {
 
+            }
+
+            /**
+             * search for events API
+             *
+             * @param \WP_REST_Request $request
+             * @return void
+             */
+            public function search(\WP_REST_Request $request) 
+            {
+                $filter = $request->get_param('filters');
+
+                $events = $this->eventService->getFilteredEvents($filter);
+                return $this->api->success($events);
             }
 
             /**
