@@ -149,9 +149,6 @@
              */
             public function participate(\WP_REST_Request $request)
             {
-                // TODO: send participated mail to participant
-                // TODO: send mail to event manager about the participant
-                // return $request->get_params();
                 $eventService = new EventService();
                 $memberService = new MemberService();
 
@@ -263,10 +260,17 @@
                     }
                 }
 
-                $this->lanParticipantRepository->delete($eventId, [
-                    'event_id' => $eventId,
-                    'member_id' => $memberId
-                ]);
+                $participant = $this->lanParticipantRepository
+                    ->select()
+                    ->where('member_id', $member->id)
+                    ->whereAnd('event_id', $eventId)
+                    ->getRow();
+                
+                $removed = $this->lanParticipantRepository->removeFromEvent($participant->id, $eventId);
+
+                if ( !$removed ) {
+                    return $this->api->conflict("Der skete en fejl, kunne ikke afmelde dig begivenheden");
+                }
 
                 // notify event manager
                 $unparticipatedNotification = (new LanEventUnparticipated($event, $member, $message))
