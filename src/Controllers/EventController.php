@@ -17,6 +17,7 @@
     use DxlApi\Services\ApiService;
     use DxlApi\Services\RequestService;
     use DxlApi\Services\MemberService;
+    use DxlApi\Services\EventService;
 
     if( !class_exists('EventController') ) 
     {
@@ -50,6 +51,8 @@
              * @var DxlApi\Services\ApiService
              */
             public $ApiService;
+
+            public $eventService;
 
             /**
              * Constructor
