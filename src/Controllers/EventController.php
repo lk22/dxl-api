@@ -114,20 +114,6 @@
             }
 
             /**
-             * search for events API
-             *
-             * @param \WP_REST_Request $request
-             * @return void
-             */
-            public function search(\WP_REST_Request $request) 
-            {
-                $filter = $request->get_param('filters');
-
-                $events = $this->eventService->getFilteredEvents($filter);
-                return $this->api->success($events);
-            }
-
-            /**
              * Participate event
              *
              * @param \Wp_REST_Request $request

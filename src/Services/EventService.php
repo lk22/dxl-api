@@ -5,7 +5,6 @@
 
     use DxlEvents\Classes\Repositories\LanRepository;
     use DxlEvents\Classes\Repositories\TrainingRepository;
-    use DxlEvents\Classes\Repositories\TournamentRepository;
 
     if( !class_exists('EventService') )
     {
@@ -19,9 +18,6 @@
              */
             public $lanRepository;
 
-            public $trainingRepository;
-            public $tournamentRepository;
-
             /**
              * Event service constructor
              */
@@ -29,7 +25,6 @@
             {
                 $this->lanRepository = new LanRepository();
                 $this->trainingRepository = new TrainingRepository();
-                $this->tournamentRepository = new TournamentRepository();
             }
 
             /**
@@ -64,36 +59,6 @@
                 
                 $updated = $this->lanRepository->update(["seats_available" => $seats->seats_available - 1], $event);
                 return ($updated == false) ? false : true;
-            }
-
-            /**
-             * return events only from wished filters
-             *
-             * @param [type] $filters
-             * @return void
-             */
-            public function getFilteredEvents($filters)
-            {
-                $events = [];
-
-                foreach($filters as $filter) {
-                    if( isset($filter["type"]) && $filter["type"] == "lan" ) {
-                        $events["lan"] = $this->lanRepository->select()->where('is_draft', 0)->get();   
-                    }
-                    if( isset($filter["type"]) && $filter["type"] == "training" ) {
-                        $events["training"] = $this->trainingRepository->select()->where('is_draft', 0);
-                    }
-                    if( isset($filter["type"]) && $filter["type"] == "tournaments" ) {
-                        $events["tournaments"] = $this->tournamentRepository->select()->where('is_draft', 0)->get();
-                    }
-                    
-                    // inject url to each event object
-                    foreach($events[$filter] as $e => $event) {
-                        $events[$filter["type"]][$e]["url"] = "?action=details&type=" . $filter["type"] . "&event=" . $event->id;
-                    }
-                }
-
-                return $events;
             }
         }
     }
