@@ -52,6 +52,11 @@
              */
             public $ApiService;
 
+            /**
+             * EventService
+             *
+             * @var DxlApi\Services\EventService
+             */
             public $eventService;
 
             /**
@@ -75,7 +80,6 @@
              */
             public function index(\WP_REST_Request $request) {
                 $lan = $this->lanRepository->all();
-                // $tournaments = $this->lanRepository->all();
                 $training = $this->trainingRepository->all();
                 $data = [];
                 foreach($lan as $l => $event) 

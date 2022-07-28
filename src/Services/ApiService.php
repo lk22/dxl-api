@@ -2,6 +2,7 @@
     namespace DxlApi\Services;
 
     use DxlApi\Interfaces\ServiceInterface;
+    use DxlApi\Utilities\LoggerUtility;
 
     if( !class_exists('ApiService') ) 
     {
@@ -104,6 +105,28 @@
              */
             public function error(?array $data = [], int $code = 500) {
                 return new \WP_Error($code, "Something went wrong", $data);
+            }
+
+            /**
+             * Validate bearer token
+             */
+            public function validate_bearer_token($request) {
+                $token = $request->get_header('Authorization');
+                if( !$token ) {
+                    return false;
+                }
+                $token = str_replace('Bearer ', '', $token);
+                $token = explode(' ', $token);
+                $token = $token[0];
+                $token = base64_decode($token);
+                $token = json_decode($token);
+                if( !$token ) {
+                    LoggerUtility::log("Bearer token invalid", [
+                        "token" => $token
+                    ]);
+                    return false;
+                }
+                return $token;
             }
         }
     }
