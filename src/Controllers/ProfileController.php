@@ -46,6 +46,12 @@
                 $this->eventService = new EventService();
             }
 
+            /**
+             * fecth profile information
+             *
+             * @param \WP_REST_Request $request
+             * @return void
+             */
             public function index(\WP_REST_Request $request) 
             {
                 $authorized = $this->api->validate_bearer_token($request);
@@ -57,6 +63,10 @@
                 {
                     return $this->api->not_found('Could not find id in request');
                 }
+
+                $profile = $this->memberRepository->find(
+                    $request->get_param('profile_id')
+                );
             }
         }
     }
