@@ -61,21 +61,21 @@
              */
             public function index(\WP_REST_Request $request) 
             {
-                $authorized = $this->api->validate_bearer_token($request);
-                return $authorized;
-                
-                if( ! $authorized ) {
-                    return $this->api->unauthorized();
-                }
+                // $authorized = $this->api->validate_bearer_token($request);
 
-                if( ! $trequest->get_body()["profile_id"] )
+                // if( ! $authorized ) {
+                //     return $this->api->unauthorized();
+                // }
+
+                if( ! $request->get_param('user_id') )
                 {
-                    return $this->api->not_found('Could not find id in request');
+                    return $this->api->not_found();
                 }
 
                 $profile = $this->memberRepository->find(
-                    $request->get_param('profile_id')
+                    $request->get_param('user_id')
                 );
+
 
                 return $this->api->success([
                     "code" => 200,

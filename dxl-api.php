@@ -10,6 +10,7 @@
  if(!defined('ABSPATH')) {
     exit;
  }
+ header("Access-Control-Allow-Origin: *");
 
  require_once dirname(__FILE__) . "/vendor/autoload.php";
  require dirname(__FILE__) . "/src/Api.php";
