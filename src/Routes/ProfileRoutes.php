@@ -2,10 +2,11 @@
     namespace DxlApi\Routes;
 
     use DxlApi\Abstracts\AbstractRoute as Route;
+    use DxlApi\Controllers\ProfileController;
     
-    if( !class_exists('EventRoutes') ) 
+    if( !class_exists('ProfileRoutes') ) 
     {
-        class EventRoutes extends Route
+        class ProfileRoutes extends Route
         {
             /**
              * Constructing Event APIS
@@ -24,7 +25,7 @@
             {
                 register_rest_route($this->prefix, '/profile', [
                     'method' => \WP_REST_Server::READABLE,
-                    'callback' => array($this, 'index'),
+                    'callback' => array(new ProfileController, 'index'),
                 ]);
             }
         }

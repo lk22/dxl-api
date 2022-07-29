@@ -6,7 +6,7 @@
     /**
      * Repositories
      */
-    use DxlMemberships\Classes\Repositories\MemberRepository;
+    use DxlMembership\Classes\Repositories\MemberRepository;
 
     /**
      * Services
@@ -37,6 +37,13 @@
             public $eventService;
 
             /**
+             * Member repository
+             *
+             * @var \DxlMembership\Classes\Repositories\MemberRepository
+             */
+            public $memberRepository;
+
+            /**
              * Constructor
              */
             public function __construct()
@@ -55,11 +62,13 @@
             public function index(\WP_REST_Request $request) 
             {
                 $authorized = $this->api->validate_bearer_token($request);
+                return $authorized;
+                
                 if( ! $authorized ) {
                     return $this->api->unauthorized();
                 }
 
-                if( ! $trequest->get_param('profile_id') )
+                if( ! $trequest->get_body()["profile_id"] )
                 {
                     return $this->api->not_found('Could not find id in request');
                 }
@@ -67,6 +76,12 @@
                 $profile = $this->memberRepository->find(
                     $request->get_param('profile_id')
                 );
+
+                return $this->api->success([
+                    "code" => 200,
+                    "message" => "Profile found",
+                    "data" => $profile
+                ]);
             }
         }
     }

@@ -46,13 +46,15 @@ if( ! class_exists('LoggerUtility') )
          */
         public static function log($message, $data = []) 
         {
-            self::$message = date("d-m-Y H:i:s", time()) . " (" . $_SERVER['REQUEST_METHOD'] . ")" . $message;
+            self::$message = date("d-m-Y H:i:s", time()) . " (" . $_SERVER['REQUEST_METHOD'] . ") " . $message;
 
             // append data to log
             if( $data )
             {
                 self::$message .= " " . json_encode($data);
             }
+
+            self::$message .= "\n";
             
             if ( is_file(self::LOGFILE) && file_exists(self::LOGFILE) ) {
                 return file_put_contents(self::LOGFILE, self::$message, FILE_APPEND);

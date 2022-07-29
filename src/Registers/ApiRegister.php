@@ -3,6 +3,7 @@
 
     use DxlApi\Routes\EventRoutes;
     use DxlApi\Routes\HomeRoutes;
+    use DxlApi\Routes\ProfileRoutes;
 
     if( !class_exists('ApiRegister') ) 
     {
@@ -15,6 +16,7 @@
                 add_action('rest_api_init', function() {
                     new EventRoutes();
                     new HomeRoutes();
+                    new ProfileRoutes();
                 });
             }
 
@@ -28,6 +30,7 @@
             public function registerRoutes(){
                 $this->eventRoutes = new EventRoutes();
                 $this->homeRoutes = new HomeRoutes();
+                $this->profileRoutes = new ProfileRoutes();
             }
         }
     }
