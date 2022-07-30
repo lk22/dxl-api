@@ -72,9 +72,9 @@
             {
                 $authorized = $this->api->validate_bearer_token($request);
 
-                if( ! $authorized ) {
-                    return $this->api->unauthorized();
-                }
+                // if( ! $authorized ) {
+                //     return $this->api->unauthorized();
+                // }
 
                 if( ! $request->get_param('user_id') )
                 {
@@ -82,13 +82,14 @@
                 }
 
                 $member = $this->memberRepository->select()->where('user_id', $request->get_param('user_id'))->getRow();
-                $membership = $this->membershipRepository->select()->where('id', $membmer->membership)->getRow();
-
-                if( ! $profile || ! $membership ) 
+                // return $member;
+                
+                if( ! $member ) 
                 {
                     return $this->api->not_found();
                 }
-
+                
+                $membership = $this->membershipRepository->select()->where('id', $member->membership)->getRow();
                 return $this->api->success([
                     "code" => 200,
                     "message" => "Profile found",
