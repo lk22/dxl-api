@@ -118,7 +118,6 @@
                     return $this->unauthorized();
                 }
                 
-
                 $token = str_replace('Bearer ', '', $token);
                 $token = explode(' ', $token);
                 $token = $token[0];
@@ -132,6 +131,10 @@
                     ]);
                     return $this->unauthorized();
                 }
+
+                LoggerUtility::log("Bearer token validated successfully", [
+                    "token" => $token
+                ]);
 
                 return true;
             }

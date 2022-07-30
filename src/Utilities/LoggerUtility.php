@@ -54,7 +54,7 @@ if( ! class_exists('LoggerUtility') )
                 self::$message .= " " . json_encode($data);
             }
 
-            self::$message .= "\n\n";
+            self::$message .= "\n";
             
             if ( is_file(self::LOGFILE) && file_exists(self::LOGFILE) ) {
                 return file_put_contents(self::LOGFILE, self::$message, FILE_APPEND);
