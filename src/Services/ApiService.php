@@ -110,7 +110,8 @@
             /**
              * Validate bearer token
              */
-            public function validate_bearer_token($request) {
+            public function validate_bearer_token($request): bool
+            {
                 $token = $request->get_header('Authorization');
 
                 if( ! $token ) {
