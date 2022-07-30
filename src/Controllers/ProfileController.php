@@ -64,17 +64,13 @@
 
             /**
              * fecth profile information
-             * TODO: find out why token is not accepted in Authorization header
+             * 
              * @param \WP_REST_Request $request
              * @return void
              */
             public function index(\WP_REST_Request $request) 
             {
-                $authorized = $this->api->validate_bearer_token($request);
-
-                // if( ! $authorized ) {
-                //     return $this->api->unauthorized();
-                // }
+                $this->api->validate_bearer_token($request);
 
                 if( ! $request->get_param('user_id') )
                 {

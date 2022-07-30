@@ -113,20 +113,26 @@
             public function validate_bearer_token($request) {
                 $token = $request->get_header('Authorization');
 
-                if( !$token ) {
-                    LoggerUtility::log("Bearer token invalid", [
-                        "token" => $token
-                    ]);
-                    return false;
+                if( ! $token ) {
+                    return $this->unauthorized();
                 }
+                
 
                 $token = str_replace('Bearer ', '', $token);
                 $token = explode(' ', $token);
                 $token = $token[0];
-                $token = base64_decode($token);
-                $token = json_decode($token);
+                // $token = base64_decode($token);
+                // $token = json_encode($token);
+                // return $token;
 
-                return $token;
+                if( ! $token ) {
+                    LoggerUtility::log("Bearer token invalid", [
+                        "token" => $token
+                    ]);
+                    return $this->unauthorized();
+                }
+
+                return true;
             }
         }
     }
