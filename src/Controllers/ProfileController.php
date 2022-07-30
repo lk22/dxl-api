@@ -7,6 +7,7 @@
      * Repositories
      */
     use DxlMembership\Classes\Repositories\MemberRepository;
+    use DxlMembership\Classes\Repositories\MembershipRepository;
 
     /**
      * Services
@@ -44,43 +45,57 @@
             public $memberRepository;
 
             /**
+             * Membership repository
+             *
+             * @var \DxlMembership\Classes\Repositories\MembershipRepository
+             */
+            public $membershipRepository;
+
+            /**
              * Constructor
              */
             public function __construct()
             {
                 $this->memberRepository = new MemberRepository();
+                $this->membershipRepository = new MembershipRepository();
                 $this->api = new ApiService();
                 $this->eventService = new EventService();
             }
 
             /**
              * fecth profile information
-             *
+             * TODO: find out why token is not accepted in Authorization header
              * @param \WP_REST_Request $request
              * @return void
              */
             public function index(\WP_REST_Request $request) 
             {
-                // $authorized = $this->api->validate_bearer_token($request);
+                $authorized = $this->api->validate_bearer_token($request);
 
-                // if( ! $authorized ) {
-                //     return $this->api->unauthorized();
-                // }
+                if( ! $authorized ) {
+                    return $this->api->unauthorized();
+                }
 
                 if( ! $request->get_param('user_id') )
                 {
                     return $this->api->not_found();
                 }
 
-                $profile = $this->memberRepository->find(
-                    $request->get_param('user_id')
-                );
+                $member = $this->memberRepository->select()->where('user_id', $request->get_param('user_id'))->getRow();
+                $membership = $this->membershipRepository->select()->where('id', $membmer->membership)->getRow();
 
+                if( ! $profile || ! $membership ) 
+                {
+                    return $this->api->not_found();
+                }
 
                 return $this->api->success([
                     "code" => 200,
                     "message" => "Profile found",
-                    "data" => $profile
+                    "data" => [
+                        "member" => $member,
+                        'membership' => $membership
+                    ]
                 ]);
             }
         }
