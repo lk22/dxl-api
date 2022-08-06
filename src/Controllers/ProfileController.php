@@ -78,6 +78,8 @@
                 }
 
                 $member = $this->memberRepository->select()->where('user_id', $request->get_param('user_id'))->getRow();
+
+                $events = $this->eventService->fetchAllEventsFromMember($member);
                 // return $member;
                 
                 if( ! $member ) 
@@ -91,7 +93,8 @@
                     "message" => "Profile found",
                     "data" => [
                         "member" => $member,
-                        'membership' => $membership
+                        'membership' => $membership,
+                        "events" => $events
                     ]
                 ]);
             }

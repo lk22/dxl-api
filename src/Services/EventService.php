@@ -5,6 +5,7 @@
 
     use DxlEvents\Classes\Repositories\LanRepository;
     use DxlEvents\Classes\Repositories\TrainingRepository;
+    use DxlEvents\Classes\Repositories\TournamentRepository;
 
     if( !class_exists('EventService') )
     {
@@ -25,6 +26,25 @@
             {
                 $this->lanRepository = new LanRepository();
                 $this->trainingRepository = new TrainingRepository();
+                $this->tournamentRepository = new TournamentRepository();
+            }
+
+            public function fetchAllEventsFromMember($member) {
+                $events = [];
+
+                $lans = $this->lanRepository->getLansByMember($member);
+                $trainings = $this->trainingRepository->getTrainingsByMember($member);
+                $tournaments = $this->tournamentRepository->getByMember($member);
+
+                foreach($lans as $lan) {
+                    $events[] = $lan;
+                }
+
+                foreach($trainings as $training) {
+                    $events[] = $training;
+                }
+
+                return $events;
             }
 
             /**
