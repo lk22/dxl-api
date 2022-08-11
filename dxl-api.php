@@ -15,6 +15,10 @@
  require_once dirname(__FILE__) . "/vendor/autoload.php";
  require dirname(__FILE__) . "/src/Api.php";
 
+add_filter( 'jwt_auth_expire', function( $expire, $issued_at ) {
+   return $issued_at + ( DAY_IN_SECONDS * 7 ); // Change the number 7 to the number of days you want the token to last
+}, 10, 2 );
+
 if( ! function_exists('add_user_id_to_jwt') ) {
    function add_user_id_to_jwt($token, $user) {
       $token['user_id'] = $user->ID;

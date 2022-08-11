@@ -8,6 +8,7 @@
      */
     use DxlMembership\Classes\Repositories\MemberRepository;
     use DxlMembership\Classes\Repositories\MembershipRepository;
+    use DxlMembership\Classes\Repositories\MemberProfileRepository;
 
     /**
      * Services
@@ -52,12 +53,20 @@
             public $membershipRepository;
 
             /**
+             * Member profile repository
+             *
+             * @var \DxlMembership\Classes\Repositories\MemberProfileRepository
+             */
+            public $memberProfileRepository;
+
+            /**
              * Constructor
              */
             public function __construct()
             {
                 $this->memberRepository = new MemberRepository();
                 $this->membershipRepository = new MembershipRepository();
+                $this->memberProfileRepository = new MemberProfileRepository();
                 $this->api = new ApiService();
                 $this->eventService = new EventService();
             }
@@ -80,21 +89,23 @@
                 $member = $this->memberRepository->select()->where('user_id', $request->get_param('user_id'))->getRow();
 
                 $events = $this->eventService->fetchAllEventsFromMember($member);
-                // return $member;
-                
+
                 if( ! $member ) 
                 {
                     return $this->api->not_found();
                 }
                 
                 $membership = $this->membershipRepository->select()->where('id', $member->membership)->getRow();
+                
+                $profileSettings = $this->memberProfileRepository->select()->where('member_id', $member->id)->getRow();
+
                 return $this->api->success([
-                    "code" => 200,
                     "message" => "Profile found",
                     "data" => [
                         "member" => $member,
                         'membership' => $membership,
-                        "events" => $events
+                        "events" => $events,
+                        "profile_settings" => $profileSettings
                     ]
                 ]);
             }
