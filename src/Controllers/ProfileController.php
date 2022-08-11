@@ -16,8 +16,8 @@
     use DxlApi\Services\TrainingService;
     use DxlApi\Services\ApiService;
     use DxlApi\Services\RequestService;
-    use DxlApi\Services\MemberService;
     use DxlApi\Services\EventService;
+    use DxlApi\Services\MembershipService;
 
     if( !class_exists('ProfileController') ) 
     {
@@ -37,6 +37,13 @@
              * @var DxlApi\Services\EventService
              */
             public $eventService;
+
+            /**
+             * MembershipService
+             *
+             * @var DxlApi\Services\MembershipService
+             */
+            public $membershipService;
 
             /**
              * Member repository
@@ -69,6 +76,7 @@
                 $this->memberProfileRepository = new MemberProfileRepository();
                 $this->api = new ApiService();
                 $this->eventService = new EventService();
+                $this->membershipService = new MembershipService();
             }
 
             /**
@@ -87,9 +95,9 @@
                 }
 
                 $member = $this->memberRepository->select()->where('user_id', $request->get_param('user_id'))->getRow();
-
+                
                 $events = $this->eventService->fetchAllEventsFromMember($member);
-
+                
                 if( ! $member ) 
                 {
                     return $this->api->not_found();
@@ -97,13 +105,19 @@
                 
                 $membership = $this->membershipRepository->select()->where('id', $member->membership)->getRow();
                 
+                $expiration = $this->membershipService->calculateMembershipExpiration($member, $membership);
+
                 $profileSettings = $this->memberProfileRepository->select()->where('member_id', $member->id)->getRow();
 
                 return $this->api->success([
                     "message" => "Profile found",
                     "data" => [
                         "member" => $member,
-                        'membership' => $membership,
+                        'membership' => [
+                            "id" => $membership->id,
+                            "name" => $membership->name,
+                            "expiration" => $expiration
+                        ],
                         "events" => $events,
                         "profile_settings" => $profileSettings
                     ]
