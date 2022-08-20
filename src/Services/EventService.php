@@ -96,9 +96,6 @@
              */
             public function createEvent(string $type, array $event) {
                 switch($type) {
-                    case 'lan':
-                        $lan = $this->lanRepository->create($event);
-                        return $lan;
                     case 'training':
                         $training = $this->trainingRepository->create($event);
                         return $training;
@@ -109,16 +106,38 @@
 
                 return false;
             }
+
+            /**
+             * Undocumented function
+             *
+             * @param string $type
+             * @param array $event
+             * @return void
+             */
+            public function updateEvent(string $type, array $event) {
+                switch($type) {
+                    case 'training':
+                        $tevent = $this->trainingRepository->find($event['id']);
+                        $training = $this->trainingRepository->update($event, $tevent->id);
+                        return $training;
+                    case 'tournament':
+                        $tevent = $this->tournamentRepository->find($event['id']);
+                        $tournament = $this->tournamentRepository->update($event, $tevent->id);
+                        return $tournament;
+                }
+
+                return false;
+            }
             
 
             /**
              * Get existing participant for specific event
              * TODO: query needs to be called through reository (#refactoring)
-             * @param [type] $event
-             * @param [type] $gamertag
+             * @param int $event
+             * @param string $gamertag
              * @return void
              */
-            public function getExistingParticipant($event, $gamertag) {
+            public function getExistingParticipant(int $event, string $gamertag) {
                 global $wpdb;
 
                 $participantExists = $wpdb->get_row(
