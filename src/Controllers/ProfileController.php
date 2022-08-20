@@ -91,8 +91,6 @@
                 
                 $events = $this->eventService->fetchAllEventsFromMember($member);
                 
-                if( ! $member ) return $this->api->not_found();
-                
                 $membership = $this->membershipRepository->select()->where('id', $member->membership)->getRow();
                 
                 $expiration = $this->membershipService->calculateMembershipExpiration($member, $membership);
@@ -120,16 +118,10 @@
              * @param \WP_REST_Request $request
              */
             public function events(\WP_REST_Request $request) {
-                $this->api->validate_bearer_token($request);
-
-                if( ! $request->get_param('user_id') ) return $this->api->not_found();
-
                 $member = $this->memberRepository->select()->where('user_id', $request->get_param('user_id'))->getRow();
                 
                 $events = $this->eventService->fetchMemberProfileEvents($member);
                 
-                if ( ! $member ) return $this->api->not_found();
-
                 return $this->api->success([
                     "message" => "Profile events collected",
                     "data" => [
