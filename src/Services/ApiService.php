@@ -33,6 +33,7 @@
              * @return void
              */
             public function success($response) {
+                LoggerUtility::log("HTTP status code: " . self::HTTP_STATUS_CODE_OK);
                 return rest_ensure_response(["code" => self::HTTP_STATUS_CODE_OK, "data" => ["response" => $response]]);
             }
 
@@ -45,6 +46,7 @@
              */
             public function created($created = "Ressource created successfully", $code = self::HTTP_STATUS_CODE_CREATED)
             {
+                LoggerUtility::log("HTTP status code: " . self::HTTP_STATUS_CODE_CREATED);
                 return rest_ensure_response([
                     "code" => $code,
                     "message" => $created
@@ -57,7 +59,8 @@
              * @param integer $code
              * @return void
              */
-            public function not_found(int $code = self::HTTP_STATUS_CODE_NOT_FOUND) {
+            public function not_found(?array $data, int $code = self::HTTP_STATUS_CODE_NOT_FOUND) {
+                LoggerUtility::log("HTTP status code: " . self::HTTP_STATUS_CODE_NOT_FOUND, $data);
                 return new \WP_HTTP_Response("Ressource not found", $code);
             }
 
@@ -70,6 +73,7 @@
              * @return void
              */
             public function forbidden($response = "Forbidden request", ?array $data = [], int $code = self::HTTP_STATUS_CODE_FORBIDDEN) {
+                LoggerUtility::log("HTTP status code: " . self::HTTP_STATUS_CODE_FORBIDDEN);
                 return new \WP_HTTP_Response($response, $code);
                 // return new \WP_Error($code, $response, $data);
             } 
@@ -82,6 +86,7 @@
              * @return void
              */
             public function unauthorized(?array $data = [], int $code = self::HTTP_STATUS_CODE_UNATHORIZED) {
+                LoggerUtility::log("HTTP status code: " . self::HTTP_STATUS_CODE_UNATHORIZED, $data);
                 return new \WP_HTTP_Response("Unauthorized request catched, you are not allowed to perform this action", $code);
             }
 
@@ -93,6 +98,7 @@
              * @return void
              */
             public function conflict(string $response = "could not perform your request", int $code = self::HTTP_STATUS_CODE_CONFLICT) {
+                LoggerUtility::log("HTTP status code: " . self::HTTP_STATUS_CODE_CONFLICT);
                 return new \WP_HTTP_Response("Conflict, " . $response, $code);
             }
 
@@ -104,6 +110,7 @@
              * @return void
              */
             public function error(?array $data = [], int $code = 500) {
+                LoggerUtility::log("HTTP status code: " . $code);
                 return new \WP_Error($code, "Something went wrong", $data);
             }
 
@@ -126,15 +133,15 @@
                 // return $token;
 
                 if( ! $token ) {
-                    LoggerUtility::log("Bearer token invalid", [
-                        "token" => $token
-                    ]);
+                    // LoggerUtility::log("Bearer token invalid", [
+                    //     "token" => $token
+                    // ]);
                     return $this->unauthorized();
                 }
 
-                LoggerUtility::log("Bearer token validated successfully", [
-                    "token" => $token
-                ]);
+                // LoggerUtility::log("Bearer token validated successfully", [
+                //     "token" => $token
+                // ]);
 
                 return true;
             }

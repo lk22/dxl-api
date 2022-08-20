@@ -44,9 +44,9 @@ if( ! class_exists('LoggerUtility') )
          * @param integer $level
          * @return void
          */
-        public static function log($message, $data = []) 
+        public static function log($message = "", $data = []) 
         {
-            self::$message = date("d-m-Y H:i:s", time()) . " (" . $_SERVER['REQUEST_METHOD'] . ") " . $message;
+            self::$message = date("d-m-Y H:i:s", time()) . " (" . $_SERVER['REQUEST_METHOD'] . ") " . $_SERVER["SERVER_NAME"] . "/" . $_SERVER["REQUEST_URI"] . " - " . $message;
 
             // append data to log
             if( $data )
