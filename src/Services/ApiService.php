@@ -43,7 +43,7 @@
              * @param integer $code
              * @return void
              */
-            public function created($created, $code = self::HTTP_STATUS_CODE_CREATED)
+            public function created($created = "Ressource created successfully", $code = self::HTTP_STATUS_CODE_CREATED)
             {
                 return rest_ensure_response([
                     "code" => $code,

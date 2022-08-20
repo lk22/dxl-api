@@ -4,6 +4,7 @@
 
     if( !class_exists('AbstractController') ) {
         abstract class AbstractController {
+
             /**
              * validating endpoint response
              * TODO: automate bearer token validation, only use on specific endpoints
@@ -12,7 +13,20 @@
              * @return void
              */
             public function validateEndpointResponse(\WP_REST_Request $request) {
-                $service = new ApiService();
+                if( ! $request->get_header('Authorization') ) {
+                    return false;
+                }
+
+                if ( !$request->get_param('user_id') ) {
+                    return false;
+                }
+
+                $validated = (new ApiService())->validate_bearer_token($request);
+                if ( !$validated ) {
+                    return false;
+                }
+
+                return true;
             }
         }
     }

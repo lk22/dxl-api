@@ -3,6 +3,7 @@
 
     use DxlApi\Abstracts\AbstractRoute as Route;
     use DxlApi\Controllers\ProfileController;
+    use DxlApi\Controllers\ProfileEventController;
     
     if( !class_exists('ProfileRoutes') ) 
     {
@@ -26,11 +27,13 @@
                 register_rest_route($this->prefix, '/profile', [
                     'method' => \WP_REST_Server::READABLE,
                     'callback' => array(new ProfileController, 'index'),
+                    'permission_callback' => array(new ProfileController, 'validateEndpointResponse')
                 ]);
 
                 register_rest_route($this->prefix, '/profile/events', [
                     'method' => \WP_REST_Server::READABLE,
                     'callback' => array(new ProfileController, 'events'),
+                    'permission_callback' => array(new ProfileEventController, 'validateEndpointResponse')
                 ]);
             }
         }

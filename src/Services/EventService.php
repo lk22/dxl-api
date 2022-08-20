@@ -86,6 +86,29 @@
 
                 return $events;
             }
+
+            /**
+             * Create new event from specific type
+             *
+             * @param string $type
+             * @param array $event
+             * @return void
+             */
+            public function createEvent(string $type, array $event) {
+                switch($type) {
+                    case 'lan':
+                        $lan = $this->lanRepository->create($event);
+                        return $lan;
+                    case 'training':
+                        $training = $this->trainingRepository->create($event);
+                        return $training;
+                    case 'tournament':
+                        $tournament = $this->tournamentRepository->create($event);
+                        return $tournament;
+                }
+
+                return false;
+            }
             
 
             /**
