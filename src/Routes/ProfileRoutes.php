@@ -35,6 +35,12 @@
                     'callback' => array(new ProfileController, 'events'),
                     'permission_callback' => array(new ProfileEventController, 'validateEndpointResponse')
                 ]);
+
+                register_rest_route($this->prefix, '/profile/events', [
+                    'method' => \WP_REST_Server::CREATABLE,
+                    'callback' => array(new ProfileEventController, 'create'),
+                    'permission_callback' => array(new ProfileEventController, 'validateEndpointResponse')
+                ]);
             }
         }
     }

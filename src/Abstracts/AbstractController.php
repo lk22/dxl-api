@@ -17,12 +17,12 @@
                     return false;
                 }
 
-                if ( !$request->get_param('user_id') ) {
+                if (  $request->get_param('user_id') ) {
                     return false;
                 }
 
                 $validated = (new ApiService())->validate_bearer_token($request);
-                if ( !$validated ) {
+                if ( ! $validated ) {
                     return false;
                 }
 
