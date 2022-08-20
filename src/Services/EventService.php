@@ -20,6 +20,20 @@
             public $lanRepository;
 
             /**
+             * Training Repository
+             *
+             * @var DxlEvents\Classes\Repositories\TrainingRepository
+             */
+            public $trainingRepository;
+
+            /**
+             * Tournament Repository
+             *
+             * @var DxlEvents\Classes\Repositories\TournamentRepository
+             */
+            public $tournamentRepository;
+
+            /**
              * Event service constructor
              */
             public function __construct()
@@ -29,6 +43,12 @@
                 $this->tournamentRepository = new TournamentRepository();
             }
 
+            /**
+             * Get all events from member
+             *
+             * @param [type] $member
+             * @return void
+             */
             public function fetchAllEventsFromMember($member) {
                 $events = [];
 
@@ -46,6 +66,27 @@
 
                 return $events;
             }
+
+            public function fetchMemberProfileEvents($member) {
+                $events = [
+                    "training" => [],
+                    "tournaments" => [],
+                ];
+
+                $trainings = $this->trainingRepository->getTrainingsByMember($member);
+                $tournaments = $this->tournamentRepository->getByMember($member);
+
+                foreach($tournaments as $tournament) {
+                    $events["tournaments"] = $lan;
+                }
+
+                foreach($trainings as $training) {
+                    $events["training"] = $training;
+                }
+
+                return $events;
+            }
+            
 
             /**
              * Get existing participant for specific event

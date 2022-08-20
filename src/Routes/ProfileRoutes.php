@@ -27,6 +27,11 @@
                     'method' => \WP_REST_Server::READABLE,
                     'callback' => array(new ProfileController, 'index'),
                 ]);
+
+                register_rest_route($this->prefix, '/profile/events', [
+                    'method' => \WP_REST_Server::READABLE,
+                    'callback' => array(new ProfileController, 'events'),
+                ]);
             }
         }
     }
