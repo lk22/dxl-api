@@ -33,10 +33,10 @@
                 register_rest_route($this->prefix, '/profile/events', [
                     'method' => \WP_REST_Server::READABLE,
                     'callback' => array(new ProfileController, 'events'),
-                    'permission_callback' => array(new ProfileEventController, 'validateEndpointResponse')
+                    'permission_callback' => array(new ProfileController, 'validateEndpointResponse')
                 ]);
 
-                register_rest_route($this->prefix, '/profile/events', [
+                register_rest_route($this->prefix, '/profile/events/create', [
                     'method' => \WP_REST_Server::CREATABLE,
                     'callback' => array(new ProfileEventController, 'create'),
                     'permission_callback' => array(new ProfileEventController, 'validateEndpointResponse')
