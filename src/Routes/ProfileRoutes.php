@@ -30,6 +30,12 @@
                     'permission_callback' => array(new ProfileController, 'validateEndpointResponse')
                 ]);
 
+                register_rest_route($this->prefix, '/profile/update', [
+                    'method' => \WP_REST_Server::EDITABLE,
+                    'callback' => array(new ProfileController, 'update'),
+                    'permission_callback' => array(new ProfileController, 'validateEndpointResponse')
+                ]);
+
                 register_rest_route($this->prefix, '/profile/events', [
                     'method' => \WP_REST_Server::READABLE,
                     'callback' => array(new ProfileController, 'events'),

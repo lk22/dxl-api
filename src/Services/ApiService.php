@@ -121,7 +121,7 @@
             {
                 $token = $request->get_header('Authorization');
 
-                if( ! $token ) {
+                if( empty($token) ) {
                     return $this->unauthorized();
                 }
                 

@@ -113,11 +113,31 @@
             }
 
             /**
+             * Updating member profile action
+             *
+             * @param \WP_REST_Request $request
+             * @return void
+             */
+            public function update(\WP_REST_Request $request) {
+
+                if ( ! $request->get_param('member') ) return $this->api->not_found("Could not find member in request body");
+
+                $member = $this->memberRepository->select()->where('user_id', $request->get_param('user_id'))->getRow();
+                $updated = $this->memberRepository->update($request->get_param('member'), $member->id);
+
+                return $this->api->success([
+                    "message" => "Profile updated",
+                    "data" => $request->get_param('member')
+                ]);
+            }
+
+            /**
              * fetching profile events 
              *
              * @param \WP_REST_Request $request
              */
             public function events(\WP_REST_Request $request) {
+                // return $request->get_header('authorization');
                 $member = $this->memberRepository->select()->where('user_id', $request->get_param('user_id'))->getRow();
                 
                 $events = $this->eventService->fetchMemberProfileEvents($member);
