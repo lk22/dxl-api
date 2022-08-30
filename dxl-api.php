@@ -4,7 +4,7 @@
  * Plugin Name: DXL API Module
  * Description: WordPress extended API for DXL module functionality
  * Author: Leo Knudsen
- * Version: 1.0.0
+ * Version: 1.0.0 test
  */
 
  if(!defined('ABSPATH')) {
