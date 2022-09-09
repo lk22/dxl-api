@@ -151,8 +151,10 @@
             {
                 $eventService = new EventService();
                 $memberService = new MemberService();
-
-                $seatedMembers = $request->get_param('members');
+                
+                $seatedMembers = $request->get_param('members') ?? [];
+                $has_companion = $request->get_param('companion_checked');
+                $companion = $request->get_param('companion_name');
 
                 $breakfast = ($request->get_param("breakfast") == "on") ? 1 : 0;
                 $dinner_friday = ($request->get_param("dinner_friday") == "on") ? 1 : 0;
@@ -175,6 +177,7 @@
                 $participant = $this->lanParticipantRepository->create([
                     "event_id" => $request->get_param('event'),
                     "member_id" => $member->id,
+                    "has_companion" => $has_companion,
                     "name" => $member->name,
                     "gamertag" => $member->gamertag,
                     "has_saturday_breakfast" => $breakfast,
@@ -194,7 +197,8 @@
                     $member, 
                     $lanEvent, 
                     $seatedMembers, 
-                    $request->get_param('message')
+                    $request->get_param('message'),
+                    $companion
                 ))->setSubject('Tilmelding ' . $member->gamertag . ')')
                     ->setReciever($member->email)
                     ->send();
@@ -203,7 +207,8 @@
                     $member, 
                     $lanEvent, 
                     $seatedMembers, 
-                    $request->get_param('message')
+                    $request->get_param('message'),
+                    $companion
                 ))->setSubject("Ny tilmelding, " . $member->gamertag)
                     ->setReciever($member->email)
                     ->send();
