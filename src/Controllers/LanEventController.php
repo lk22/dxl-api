@@ -194,6 +194,10 @@
                     return $this->api->conflict("Der skete en fejl, kunne ikke tilmelde dig begivenheden");
                 }
 
+                $this->lanRepository->update([
+                    "participants_count" => $lanEvent->participants_count + 1
+                ], $lanEvent->id);
+
                 $participantMail = (new EventParticipatedMail(
                     $member, 
                     $lanEvent, 
@@ -260,7 +264,7 @@
                         $this->participantRepository->delete($participant->id);
 
                         $this->tournamentRepository->update(
-                            ['participants_count' => $tournament],
+                            ['participants_count' => $event->participants_count - 1],
                             $participant->id
                         );
                     }
