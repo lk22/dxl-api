@@ -153,6 +153,7 @@
                 $memberService = new MemberService();
                 
                 $seatedMembers = $request->get_param('members') ?? [];
+
                 $has_companion = $request->get_param('companion_checked');
                 $companion = $request->get_param('companion_name');
 
