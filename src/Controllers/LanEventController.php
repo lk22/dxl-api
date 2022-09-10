@@ -167,6 +167,7 @@
                 );
 
                 $lanEvent = $this->lanRepository->find($request->get_param('event'));
+                // return $lanEvent;
                 if( $participantExists ) {
                     return $this->api->conflict("Du er allerede tilmeldt denne begivenhed");
                 }
@@ -281,6 +282,10 @@
                 if ( !$removed ) {
                     return $this->api->conflict("Der skete en fejl, kunne ikke afmelde dig begivenheden");
                 }
+
+                $this->lanRepository->update([
+                    "participants_count" => $event->participants_count - 1
+                ], $event->id);
 
                 // notify event manager
                 $unparticipatedNotification = (new LanEventUnparticipated($event, $member, $message))
