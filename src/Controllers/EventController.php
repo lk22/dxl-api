@@ -14,6 +14,7 @@
      * Services
      */
     use DxlApi\Services\TrainingService;
+    use DxlApi\Services\TournamentService;
     use DxlApi\Services\ApiService;
     use DxlApi\Services\RequestService;
     use DxlApi\Services\MemberService;
@@ -172,11 +173,11 @@
                 $eventService = $this->eventService($params["type"]);
                 $event = $eventService->getEvent($params["event"]);
 
-                if( !$event ) {
+                if( ! $event ) {
                     return new \WP_Error(404, 'Event not found', ["data" => $params]);
                 }
 
-                if( !$eventService->unparticipate($event, $params["member"]) ) {
+                if( ! $eventService->unparticipate($event, $params["member"]) ) {
                     return new \WP_Error(500, "Could not unparticipate event, something went wrong", ["data" => $event]);
                 }
 
@@ -194,11 +195,12 @@
                 switch($type)
                 {
                     case "training":
-                        $eventService =  new TrainingService();
+                        $eventService = new TrainingService();
                         break;
 
                     case "tournament":
                         // add tournament service
+                        $eventService = new TournamentService();
                         break;
 
                     case "lan":
@@ -206,7 +208,7 @@
                         break;
                 }
 
-                return $eventService;
+                return $eventService ?? false;
             }
         }
     }
