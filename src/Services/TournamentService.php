@@ -10,12 +10,23 @@
     {
         class TournamentService implements ServiceInterface
         {
-            protected $test = "test";
-
+            /**
+             * Tournament Repository
+             *
+             * @var DxlEvents\Classes\Repositories\TournamentRepository
+             */
             public $tournamentRepository;
 
+            /**
+             * Participant Repository
+             *
+             * @var DxlEvents\Classes\Repositories\ParticipantRepository
+             */
             public $participantRepository;
 
+            /**
+             * Tournament service constructor
+             */
             public function __construct()
             {
                 $this->participantRepository = new ParticipantRepository();
@@ -34,18 +45,34 @@
             }
 
             /**
+             * Creating new tournament bound to profile
+             *
+             * @param array $event
+             * @return void
+             */
+            public function createEvent($event): int
+            {
+                return $this->tournamentRepository->create($event);
+            }
+
+            /**
              * participate event with required member data
              *
              * @param int $event
              * @param int $member
              * @return boolean
              */
-            public function participate(object $member, $event): bool
+            public function participate(object $member, $event)
             {
-                $participant = $this->tournamentRepository->participants()->find($member->id);
+                $participant = $this->tournamentRepository
+                    ->participants()
+                    ->select()
+                    ->where('member_id', $member->id)
+                    ->whereAnd('event_id', $event->id)
+                    ->getRow();
 
                 if( $participant ) {
-                    return false;
+                    return true;
                 }
                 
                 $this->tournamentRepository->participants()->create([
@@ -59,9 +86,9 @@
                     "is_cooperation" => 0
                 ]);
 
-                return $this->tournamentRepository->update([
-                    "participants_count" => $event->participants_count + 1
-                ], $event->id);
+                $this->tournamentRepository->update(["participants_count" => $event->participants + 1], $event->id);
+
+                return false;
             }
 
             /**

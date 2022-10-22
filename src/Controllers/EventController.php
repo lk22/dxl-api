@@ -147,10 +147,9 @@
                 }
 
                 $event = $eventService->getEvent($params["event"], $params["type"]);
-
                 $participated = $eventService->participate($participant, $event);
 
-                if (!$participated) {
+                if ($participated) {
                     return new \WP_Error(500, 'Du er allerede tilmeldt denne trænings begivenhed');
                 }  
 
@@ -169,15 +168,16 @@
             public function unparticipate(\WP_REST_Request $request) 
             {
                 $params = $request->get_params();
-
+                // return $params;
                 $eventService = $this->eventService($params["type"]);
                 $event = $eventService->getEvent($params["event"]);
+                $member = $params["member"];
 
                 if( ! $event ) {
                     return new \WP_Error(404, 'Event not found', ["data" => $params]);
                 }
 
-                if( ! $eventService->unparticipate($event, $params["member"]) ) {
+                if( ! $eventService->unparticipate($event, $member) ) {
                     return new \WP_Error(500, "Could not unparticipate event, something went wrong", ["data" => $event]);
                 }
 
@@ -213,3 +213,4 @@
         }
     }
 ?>
+

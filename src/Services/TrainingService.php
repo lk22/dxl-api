@@ -10,12 +10,23 @@
     {
         class TrainingService implements ServiceInterface
         {
-            protected $test = "test";
-
+            /**
+             * Training Repository
+             *
+             * @var DxlEvents\Classes\Repositories\TrainingRepository
+             */
             public $trainingRepository;
 
+            /**
+             * Participant Repository
+             *
+             * @var DxlEvents\Classes\Repositories\ParticipantRepository
+             */
             public $participantRepository;
 
+            /**
+             * Training service constructor
+             */
             public function __construct()
             {
                 $this->trainingRepository = new TrainingRepository();
@@ -40,15 +51,19 @@
              * @param int $member
              * @return boolean
              */
-            public function participate(object $member, $event): bool
+            public function participate(object $member, object $event)
             {
-                $participant = $this->trainingRepository->participant($member->id);
-
+                $participant = $this->participantRepository
+                    ->select()
+                    ->where('member_id', $member->id)
+                    ->whereAnd('event_id', $event->id)
+                    ->getRow();
+                
                 if( $participant ) {
                     return false;
                 }
-                
-                $this->trainingRepository->addParticipant([
+
+                $this->participantRepository->create([
                     "member_id" => $member->id,
                     "name" => $member->name,
                     "gamertag" => $member->gamertag,
@@ -56,7 +71,7 @@
                     "event_id" => $event->id,
                     "lan_id" => 0,
                     "is_training" => 1,
-                    "is_cooperation" => 0
+                    "is_cooperation" => 0,
                 ]);
 
                 return $this->trainingRepository->update([
@@ -73,7 +88,11 @@
              */
             public function unparticipate($event, int $member)
             {
-                $participant = $this->participantRepository->select()->where('member_id', $member)->whereAnd('event_id', $event)->getRow();
+                $participant = $this->participantRepository
+                    ->select()
+                    ->where('member_id', $member)
+                    ->whereAnd('event_id', $event->id)
+                    ->getRow();
 
                 if( !$participant ) return false;
 
