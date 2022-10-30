@@ -163,6 +163,21 @@
                 $updated = $this->lanRepository->update(["seats_available" => $seats->seats_available - 1], $event);
                 return ($updated == false) ? false : true;
             }
+
+            /**
+             * Validating participant companion
+             *
+             * @param array $companion
+             * @return boolean
+             */
+            public function validateCompanion($companion): bool 
+            {
+                if(empty($companion['name']) ) {
+                    return false;
+                }
+
+                return true;
+            }
         }
     }
 ?>

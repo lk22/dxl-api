@@ -155,7 +155,7 @@
                 $seatedMembers = $request->get_param('members') ?? [];
 
                 $has_companion = $request->get_param('companion_checked');
-                $companion = $request->get_param('companion_name');
+                $companion = $request->get_param('companion_data');
 
                 $breakfast = ($request->get_param("breakfast") == "on") ? 1 : 0;
                 $dinner_friday = ($request->get_param("dinner_friday") == "on") ? 1 : 0;
@@ -167,9 +167,13 @@
                 );
 
                 $lanEvent = $this->lanRepository->find($request->get_param('event'));
-                // return $lanEvent;
+
                 if( $participantExists ) {
                     return $this->api->conflict("Du er allerede tilmeldt denne begivenhed");
+                }
+
+                if ( ! $eventService->validateCompanion($companion) ) {
+                    return $this->api->conflict("Ledsager oplysninger er ikke korrekt udfyldte");
                 }
 
                 $gamertag = $request->get_param("gamertag");
@@ -194,10 +198,12 @@
                 if( !$participant ) {
                     return $this->api->conflict("Der skete en fejl, kunne ikke tilmelde dig begivenheden");
                 }
-
+                
                 $this->lanRepository->update([
-                    "participants_count" => $lanEvent->participants_count + 1
+                    "participants_count" => $lanEvent->participants_count + 1,
                 ], $lanEvent->id);
+
+                $seats_updated = $eventService->removeAvailableSeat($request->get_param("event"));
 
                 $participantMail = (new EventParticipatedMail(
                     $member, 
@@ -218,8 +224,6 @@
                 ))->setSubject("Ny tilmelding, " . $member->gamertag)
                     ->setReciever($member->email)
                     ->send();
-
-                $seats_updated = $eventService->removeAvailableSeat($request->get_param("event"));
 
                 return $this->api->created("du er nu tilmeldt begivenheden, du modtager en mail fra os vedr begivenheden");
             }
