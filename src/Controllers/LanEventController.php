@@ -361,12 +361,13 @@
              * @return void
              */
             public function unparticipateTournament(\WP_REST_Request $request) {
+                global $wpdb;
+
                 $TID = $request->get_param('tournament');
                 $event = $request->get_param('event');
                 $member = $request->get_param('participant');
 
                 $participant = $this->memberRepository->find($member);
-
                 $tournament = $this->tournamentRepository->find($TID);
 
                 $participant = $this->participantRepository
@@ -374,13 +375,24 @@
                     ->where('member_id', $member)
                     ->whereAnd('event_id', $tournament->id)
                     ->getRow();
-                
+
+                    // return $participant;
+
                 if ( !$participant ) {
                     return $this->api->conflict('Du er ikke tilmeldt turneringen');
                 }
 
-                $deleted = $this->participantRepository->delete($tournament->id);
-                
+                /**
+                 * TODO: refactor to use repository
+                 */
+                $deleted = $wpdb->delete(
+                    $wpdb->prefix . 'event_participants',
+                    ['id' => $participant->id],
+                    ['%d']
+                );
+
+                // $deleted = $this->participantRepository->delete($participant->id);
+
                 if ( ! $deleted ) {
                     return $this->api->conflict('Noget gik galt, kunne ikke afmelde dig turneringen');
                 }
