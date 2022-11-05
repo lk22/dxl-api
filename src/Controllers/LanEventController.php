@@ -107,7 +107,7 @@
             {
                 $eventTournament = $request->get_params()["tournament"];
                 $event = $request->get_params()["event"];
-
+                $participant = $request->get_params()["participant"];
                 // return $event;
 
                 $tournament = $this->tournamentRepository   
@@ -118,12 +118,18 @@
                     ->getRow();
 
                 $participants = $this->participantRepository->findByEvent($tournament->id);
+                $participated = $this->participantRepository->
+                    select()
+                    ->where('event_id', $tournament->id)
+                    ->whereAnd('member_id', $participant)
+                    ->getRow();
 
                 $participants_data = [];
                 
                 foreach ( $participants as $p => $participant ) {
                     $member = $this->memberRepository->find($participant->member_id);
                     $participants_data[$p] = [
+                        "id" => $member->id,
                         "name" => $member->name,
                         "gamertag" => $member->gamertag,
                     ];
@@ -137,7 +143,8 @@
                     "endtime" => date("H:i", $tournament->endtime),
                     "description" => $tournament->description,
                     "participants_count" => $tournament->participants_count,
-                    "participants" => $participants_data
+                    "participants" => $participants_data,
+                    "participated" => $participated ? true : false
                 ]);
             }
 
@@ -345,6 +352,44 @@
                 }
 
                 return $this->api->created("Du er nu tilmeldt turneringen");
+            }
+
+            /**
+             * Unparticipate tournament resource
+             *
+             * @param \WP_REST_Request $request
+             * @return void
+             */
+            public function unparticipateTournament(\WP_REST_Request $request) {
+                $TID = $request->get_param('tournament');
+                $event = $request->get_param('event');
+                $member = $request->get_param('participant');
+
+                $participant = $this->memberRepository->find($member);
+
+                $tournament = $this->tournamentRepository->find($TID);
+
+                $participant = $this->participantRepository
+                    ->select()
+                    ->where('member_id', $member)
+                    ->whereAnd('event_id', $tournament->id)
+                    ->getRow();
+                
+                if ( !$participant ) {
+                    return $this->api->conflict('Du er ikke tilmeldt turneringen');
+                }
+
+                $deleted = $this->participantRepository->delete($tournament->id);
+                
+                if ( ! $deleted ) {
+                    return $this->api->conflict('Noget gik galt, kunne ikke afmelde dig turneringen');
+                }
+
+                $this->tournamentRepository->update([
+                    "participants_count" => $tournament->participants_count - 1
+                ], $tournament->id);
+
+                return $this->api->success('Du er nu afmeldt turneringen');
             }
         }
     }

@@ -58,6 +58,11 @@
                     'callback' => [new LanEventController, 'participateTournament']
                 ]);
 
+                register_rest_route($this->prefix, '/event/lan/tournament/unparticipate', [
+                    'methods' => \WP_REST_Server::DELETABLE,
+                    'callback' => [new LanEventController, 'unparticipateTournament']
+                ]);
+
                 // participate training or tournament event endpoint
                 register_rest_route($this->prefix, '/event/participate', [
                     'methods' => \WP_REST_Server::CREATABLE,
