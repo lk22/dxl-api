@@ -270,8 +270,8 @@
                         $this->participantRepository->delete($participant->id);
 
                         $this->tournamentRepository->update(
-                            ['participants_count' => $event->participants_count - 1],
-                            $participant->id
+                            ['participants_count' => $tournament->participants_count - 1],
+                            $tournament->id
                         );
                     }
                 }
@@ -289,7 +289,7 @@
                 }
 
                 $this->lanRepository->update([
-                    "participants_count" => $event->participants_count - 1
+                    "participants_count" => $event->participants_count + 1
                 ], $event->id);
 
                 // notify event manager
