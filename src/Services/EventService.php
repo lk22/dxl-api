@@ -172,7 +172,7 @@
              */
             public function validateCompanion($companion): bool 
             {
-                if(empty($companion['name']) ) {
+                if( $companion["is_checked"] && empty($companion['name']) ) {
                     return false;
                 }
 

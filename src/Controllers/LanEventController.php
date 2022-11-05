@@ -156,6 +156,7 @@
 
                 $has_companion = $request->get_param('companion_checked');
                 $companion = $request->get_param('companion_data');
+                // return $companion;
 
                 $breakfast = ($request->get_param("breakfast") == "on") ? 1 : 0;
                 $dinner_friday = ($request->get_param("dinner_friday") == "on") ? 1 : 0;
@@ -172,7 +173,7 @@
                     return $this->api->conflict("Du er allerede tilmeldt denne begivenhed");
                 }
 
-                if ( ! $eventService->validateCompanion($companion) ) {
+                if ( isset($companion) && ! $eventService->validateCompanion($companion) ) {
                     return $this->api->conflict("Ledsager oplysninger er ikke korrekt udfyldte");
                 }
 
