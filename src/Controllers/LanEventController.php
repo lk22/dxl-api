@@ -107,7 +107,7 @@
             {
                 $eventTournament = $request->get_params()["tournament"];
                 $event = $request->get_params()["event"];
-                $participant = $request->get_params()["participant"];
+                $participant = $request->get_params()["participant"] ?? 0;
                 // return $event;
 
                 $tournament = $this->tournamentRepository   
@@ -118,6 +118,7 @@
                     ->getRow();
 
                 $participants = $this->participantRepository->findByEvent($tournament->id);
+                
                 $participated = $this->participantRepository->
                     select()
                     ->where('event_id', $tournament->id)
@@ -144,7 +145,7 @@
                     "description" => $tournament->description,
                     "participants_count" => $tournament->participants_count,
                     "participants" => $participants_data,
-                    "participated" => $participated ? true : false
+                    "participated" => ($participated !== null) ? true : false
                 ]);
             }
 
@@ -163,7 +164,6 @@
 
                 $has_companion = $request->get_param('companion_checked');
                 $companion = $request->get_param('companion_data');
-                // return $companion;
 
                 $breakfast = ($request->get_param("breakfast") == "on") ? 1 : 0;
                 $dinner_friday = ($request->get_param("dinner_friday") == "on") ? 1 : 0;
@@ -244,6 +244,7 @@
              */
             public function unparticipate(\WP_REST_Request $request) 
             {
+                global $wpdb;
                 $eventId    = $request->get_param('event');
                 $memberId   = $request->get_param('member');
                 $message    = $request->get_param('message') ?? "";
@@ -269,17 +270,22 @@
                     $participant = $this->participantRepository
                         ->select()
                         ->where('member_id', $member->id)
-                        ->whereAnd('id', $tournament->id)
+                        ->whereAnd('event_id', $tournament->id)
                         ->getRow();
 
                     // if the participant exists on the tournament, remove the participant
                     if( $participant ) {
-                        $this->participantRepository->delete($participant->id);
-
-                        $this->tournamentRepository->update(
-                            ['participants_count' => $tournament->participants_count - 1],
-                            $tournament->id
+                        $wpdb->delete(
+                            $wpdb->prefix . 'event_participants',
+                            ['id' => $participant->id]
                         );
+
+                        // if( $removed ) {
+                            $this->tournamentRepository->update(
+                                ['participants_count' => $pcount->participants_count - 1],
+                                $tournament->id
+                            );
+                        // }
                     }
                 }
 
