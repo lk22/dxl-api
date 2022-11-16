@@ -26,6 +26,7 @@
     use DxlEvents\Classes\Mails\LanEventParticipatedMail;
     use DxlEvents\Classes\Mails\LanEventUnparticipated;
     use DxlEvents\Classes\Mails\EventUnparticipated;
+    use DxlEvents\Classes\Mails\LanEventFoodOrderUpdate;
 
     /**
      * Exceptions
@@ -94,6 +95,7 @@
                 $this->lanParticipantRepository = new LanParticipantRepository();
                 $this->memberRepository = new MemberRepository();
                 $this->api = new ApiService();
+                $this->eventService = new EventService();
             }
 
             /**
@@ -408,6 +410,42 @@
                 ], $tournament->id);
 
                 return $this->api->success('Du er nu afmeldt turneringen');
+            }
+
+            /**
+             * updating food ordering
+             *
+             * @param \WP_REST_Request $request
+             * @return void
+             */
+            public function updateFoodOrder(\WP_REST_Request $request) 
+            {
+                global $wpdb;
+                $participantID = $request->get_param('participant');
+                $foodOrder = $request->get_param('foodOrder');
+
+                $member = $this->memberRepository->find($participantID);
+
+                $updatedFoodOrder = $wpdb->update($wpdb->prefix . "lan_participants", [
+                    "has_friday_breakfast" => (isset($foodOrder["has_friday_breakfast"])) ? 1 : 0,
+                    "has_saturday_breakfast" => (isset($foodOrder["has_saturday_breakfast"])) ? 1 : 0,
+                    "has_saturday_lunch" => (isset($foodOrder["has_saturday_lunch"])) ? 1 : 0,
+                    "has_saturday_dinner" => (isset($foodOrder["has_saturday_dinner"])) ? 1 : 0,
+                    "has_sunday_breakfast" => (isset($foodOrder["has_sunday_breakfast"])) ? 1 : 0
+                ], ["member_id" => $participantID]);
+
+                // $updatedFoodOrder = $this->eventService->updateFoodOrderParticipant($foodOrder, intval($participantID));
+                if( ! $updatedFoodOrder ) {
+                    return $this->api->error([$foodOrder]);
+                }
+
+                // send new mail to event handler about participant food order update
+                $foodOrderUpdateMail = (new LanEventFoodOrderUpdate($foodOrder, $member))
+                    ->setSubject("Lan Deltager " . $member->name . " mad bestilling")
+                    ->setReciever('medlemsskab@danishxboxleague.dk')
+                    ->send();
+                    
+                return $this->api->success("Dine mad ønsker er nu registreret, du vil modtage en faktura snarest for din mad bestilling");
             }
         }
     }

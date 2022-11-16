@@ -6,6 +6,7 @@
     use DxlEvents\Classes\Repositories\LanRepository;
     use DxlEvents\Classes\Repositories\TrainingRepository;
     use DxlEvents\Classes\Repositories\TournamentRepository;
+    use DxlEvents\Classes\Repositories\LanParticipantRepository;
 
     if( !class_exists('EventService') )
     {
@@ -41,6 +42,7 @@
                 $this->lanRepository = new LanRepository();
                 $this->trainingRepository = new TrainingRepository();
                 $this->tournamentRepository = new TournamentRepository();
+                $this->lanParticipantRepository = new LanParticipantRepository();
             }
 
             /**
@@ -177,6 +179,31 @@
                 }
 
                 return true;
+            }
+
+            /**
+             * Updating food Order on participant
+             *
+             * @param [type] $foodOrder
+             * @param [type] $participant
+             * @return void
+             */
+            public function updateFoodOrderParticipant($foodOrder, $participant) 
+            {
+                $foodOrderData = [];
+                // return $foodOrder;
+                $where = [];
+                foreach ($foodOrder as $key => $item) {
+                    // return in_array($item, $foodOrder);
+                    if( ! array_key_exists($item, $foodOrderData) ) {
+                        $foodOrderData[$key] = $foodOrder[$key];
+                    }
+                }
+
+                // return $foodOrderData;
+
+                $updatedFoodOrder = $this->lanParticipantRepository->update($foodOrder, $participant);
+                return ( !$updatedFoodOrder ) ? false : true;
             }
         }
     }
