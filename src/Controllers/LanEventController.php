@@ -444,8 +444,8 @@
                     ->setSubject("Lan Deltager " . $member->name . " mad bestilling")
                     ->setReciever('medlemsskab@danishxboxleague.dk')
                     ->send();
-                    
-                return $this->api->success("Dine mad ønsker er nu registreret, du vil modtage en faktura snarest for din mad bestilling");
+
+                return $this->api->success("Dine mad ønsker er registreret, du vil modtage en faktura snarest for din mad bestilling");
             }
         }
     }
