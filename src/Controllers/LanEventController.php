@@ -196,7 +196,7 @@
                     "has_companion" => $has_companion,
                     "name" => $member->name,
                     "gamertag" => $member->gamertag,
-                    "has_saturday_breakfast" => $breakfast,
+                    "has_friday_breakfast" => $breakfast,
                     "has_saturday_breakfast" => $breakfast,
                     "has_sunday_breakfast" => $breakfast,
                     "has_sunday_breakfast" => $breakfast,
