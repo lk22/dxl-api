@@ -167,9 +167,9 @@
                 $has_companion = $request->get_param('companion_checked');
                 $companion = $request->get_param('companion_data');
 
-                $breakfast = ($request->get_param("breakfast") == "on") ? 1 : 0;
-                $dinner_friday = ($request->get_param("dinner_friday") == "on") ? 1 : 0;
-                $dinner_saturday = ($request->get_param("dinner_saturday") == "on") ? 1 : 0;
+                $breakfast = $request->get_param("breakfast");
+                $dinner_friday = $request->get_param("dinner_friday");
+                $dinner_saturday = $request->get_param("dinner_saturday");
 
                 $participantExists = $eventService->getExistingParticipant(
                     $request->get_param("event"), 
@@ -196,7 +196,7 @@
                     "has_companion" => $has_companion,
                     "name" => $member->name,
                     "gamertag" => $member->gamertag,
-                    "has_friday_breakfast" => $breakfast,
+                    "has_saturday_breakfast" => $breakfast,
                     "has_saturday_breakfast" => $breakfast,
                     "has_sunday_breakfast" => $breakfast,
                     "has_sunday_breakfast" => $breakfast,
@@ -433,7 +433,7 @@
                     "has_saturday_dinner" => (isset($foodOrder["has_saturday_dinner"])) ? 1 : 0,
                     "has_sunday_breakfast" => (isset($foodOrder["has_sunday_breakfast"])) ? 1 : 0
                 ], ["member_id" => $participantID]);
-
+                
                 // $updatedFoodOrder = $this->eventService->updateFoodOrderParticipant($foodOrder, intval($participantID));
                 if( ! $updatedFoodOrder ) {
                     return $this->api->error([$foodOrder]);
@@ -444,8 +444,8 @@
                     ->setSubject("Lan Deltager " . $member->name . " mad bestilling")
                     ->setReciever('medlemsskab@danishxboxleague.dk')
                     ->send();
-
-                return $this->api->success("Dine mad ønsker er registreret, du vil modtage en faktura snarest for din mad bestilling");
+                    
+                return $this->api->success("Dine mad ønsker er nu registreret, du vil modtage en faktura snarest for din mad bestilling");
             }
         }
     }
