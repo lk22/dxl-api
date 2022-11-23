@@ -113,7 +113,6 @@
                 // return $event;
 
                 $participantMember = $this->memberRepository->find($participant);
-                // return $this->api->success($member);
 
                 $tournament = $this->tournamentRepository   
                     ->select()
