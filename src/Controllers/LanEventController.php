@@ -337,7 +337,7 @@
                 $member = $request->get_param('member');
                 $event = $request->get_param('event');
 
-                $participant = $this->memberRepository->select()->where('user_id', $member)->getRow();
+                $participant = $this->memberRepository->find($member);
                 $tournament_participants = $this->tournamentRepository
                     ->select(['participants_count'])
                     ->where('id', $tournament)
@@ -383,7 +383,7 @@
 
                 $participant = $this->participantRepository
                     ->select()
-                    ->where('user_id', $member)
+                    ->where('member_id', $member)
                     ->whereAnd('event_id', $tournament->id)
                     ->getRow();
 
