@@ -383,11 +383,9 @@
 
                 $participant = $this->participantRepository
                     ->select()
-                    ->where('member_id', $member)
+                    ->where('user_id', $member)
                     ->whereAnd('event_id', $tournament->id)
                     ->getRow();
-
-                    return $this->api->success($participant);
 
                 if ( !$participant ) {
                     return $this->api->conflict('Du er ikke tilmeldt turneringen');
