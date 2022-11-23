@@ -387,7 +387,7 @@
                     ->whereAnd('event_id', $tournament->id)
                     ->getRow();
 
-                    // return $participant;
+                    return $this->api->success($participant);
 
                 if ( !$participant ) {
                     return $this->api->conflict('Du er ikke tilmeldt turneringen');
