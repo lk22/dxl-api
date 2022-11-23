@@ -112,6 +112,9 @@
                 $participant = $request->get_params()["participant"] ?? 0;
                 // return $event;
 
+                $participantMember = $this->memberRepository->find($participant);
+                // return $this->api->success($member);
+
                 $tournament = $this->tournamentRepository   
                     ->select()
                     ->where('id', $eventTournament)
@@ -147,7 +150,8 @@
                     "description" => $tournament->description,
                     "participants_count" => $tournament->participants_count,
                     "participants" => $participants_data,
-                    "participated" => ($participated !== null) ? true : false
+                    "participated" => ($participated !== null) ? true : false,
+                    "member" => $participantMember
                 ]);
             }
 
