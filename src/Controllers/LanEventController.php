@@ -235,7 +235,7 @@
                     $request->get_param('message'),
                     $companion
                 ))->setSubject("Ny tilmelding, " . $member->gamertag)
-                    ->setReciever($member->email)
+                    ->setReciever("medlemsskab@danishxboxleague.dk")
                     ->send();
 
                 return $this->api->created("du er nu tilmeldt begivenheden, du modtager en mail fra os vedr begivenheden");
