@@ -235,7 +235,7 @@
                     $request->get_param('message'),
                     $companion
                 ))->setSubject("Ny tilmelding, " . $member->gamertag)
-                    ->setReciever("medlemsskab@danishxboxleague.dk")
+                    ->setReciever("medlemskab@danishxboxleague.dk")
                     ->send();
 
                 return $this->api->created("du er nu tilmeldt begivenheden, du modtager en mail fra os vedr begivenheden");
@@ -313,7 +313,7 @@
                 // notify event manager
                 $unparticipatedNotification = (new LanEventUnparticipated($event, $member, $message))
                     ->setSubject('Afmelding, ' . $member->name)
-                    ->setReciever('medlemsskab@danishxboxleague.dk')
+                    ->setReciever('medlemskab@danishxboxleague.dk')
                     ->send();
 
                 // notify the participant that the unparticipation is recieved
