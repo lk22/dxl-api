@@ -443,7 +443,7 @@
                 // send new mail to event handler about participant food order update
                 $foodOrderUpdateMail = (new LanEventFoodOrderUpdate($foodOrder, $member))
                     ->setSubject("Lan Deltager " . $member->name . " mad bestilling")
-                    ->setReciever('medlemsskab@danishxboxleague.dk')
+                    ->setReciever('medlemskab@danishxboxleague.dk')
                     ->send();
                     
                 return $this->api->success("Dine mad ønsker er nu registreret, du vil modtage en faktura snarest for din mad bestilling");
