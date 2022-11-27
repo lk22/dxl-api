@@ -252,7 +252,7 @@
                 global $wpdb;
                 $eventId    = $request->get_param('event');
                 $memberId   = $request->get_param('member');
-                $message    = $request->get_param('message') ?? "";
+                $message    = $request->get_param('messageValue') ?? "";
 
                 $member = $this->memberRepository
                     ->select()
