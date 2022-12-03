@@ -86,7 +86,7 @@
                     "is_cooperation" => 0
                 ]);
 
-                $this->tournamentRepository->update(["participants_count" => $event->participants + 1], $event->id);
+                $this->tournamentRepository->update(["participants_count" => $event->participants_count + 1], $event->id);
 
                 return false;
             }
