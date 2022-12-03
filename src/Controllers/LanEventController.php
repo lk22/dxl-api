@@ -307,7 +307,7 @@
                 }
 
                 $this->lanRepository->update([
-                    "participants_count" => $event->participants_count + 1
+                    "participants_count" => $event->participants_count - 1
                 ], $event->id);
 
                 // notify event manager
