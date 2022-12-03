@@ -47,8 +47,8 @@
             /**
              * participate event with required member data
              *
-             * @param int $event
-             * @param int $member
+             * @param object $event
+             * @param object $member
              * @return boolean
              */
             public function participate(object $member, object $event)
@@ -60,7 +60,7 @@
                     ->getRow();
                 
                 if( $participant ) {
-                    return false;
+                    return true;
                 }
 
                 $this->participantRepository->create([
@@ -74,7 +74,7 @@
                     "is_cooperation" => 0,
                 ]);
 
-                return $this->trainingRepository->update([
+                $this->trainingRepository->update([
                     "participants_count" => $event->participants_count + 1
                 ], $event->id);
             }
