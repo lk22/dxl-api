@@ -8,9 +8,13 @@
      */
     use DxlEvents\Classes\Repositories\LanRepository;
     use DxlEvents\Classes\Repositories\TournamentRepository;
+    use DxlEvents\Classes\Repositories\TournamentSettingRepository;
     use DxlEvents\Classes\Repositories\ParticipantRepository;
     use DxlEvents\Classes\Repositories\LanParticipantRepository;
     use DxlMembership\Classes\Repositories\MemberRepository;
+    use DxlEvents\Classes\Repositories\GameRepository;
+    use DxlEvents\Classes\Repositories\GameTypeRepository;
+    use DxlEvents\Classes\Repositories\GameModeRepository;
 
     /**
      * Services
@@ -56,6 +60,8 @@
              */
             protected $tournamentRepository;
 
+            protected $TournamentSettingRepository;
+
             /**
              * participant repository
              *
@@ -77,6 +83,10 @@
              */
             protected $memberRepository;
 
+            protected $gameRepository;
+            protected $gameTypeRepository;
+            protected $gameModeRepository;
+
             /**
              * Api service
              *
@@ -91,8 +101,12 @@
             {
                 $this->lanRepository = new LanRepository();
                 $this->tournamentRepository = new TournamentRepository();
+                $this->TournamentSettingRepository = new TournamentSettingRepository();
                 $this->participantRepository = new ParticipantRepository();
                 $this->lanParticipantRepository = new LanParticipantRepository();
+                $this->gameRepository = new GameRepository();
+                $this->gameTypeRepository = new GameTypeRepository();
+                $this->gameModeRepository = new GameModeRepository();
                 $this->memberRepository = new MemberRepository();
                 $this->api = new ApiService();
                 $this->eventService = new EventService();
@@ -120,6 +134,11 @@
                     ->whereAnd('has_lan', 1)
                     ->whereAnd('lan_id', $event)
                     ->getRow();
+
+                $settings = $this->TournamentSettingRepository->find($tournament->id);
+                $game = $this->gameRepository->find($settings->game_id);
+                $gameType = $this->gameTypeRepository->find($game->game_type);
+                $gameMode = $this->gameModeRepository->find($settings->game_mode);
 
                 $participants = $this->participantRepository->findByEvent($tournament->id);
                 
@@ -150,7 +169,10 @@
                     "participants_count" => $tournament->participants_count,
                     "participants" => $participants_data,
                     "participated" => ($participated !== null) ? true : false,
-                    "member" => $participantMember
+                    "member" => $participantMember,
+                    "game" => $game->name ?? "Ikke angivet",
+                    "game_type" => $gameType->name ?? "Ikke angivet",
+                    "game_mode" => $gameMode->name ?? "Ikke angivet",
                 ]);
             }
 
