@@ -374,7 +374,7 @@
                 $participated = $this->participantRepository->create([
                     "member_id" => $participant->id,
                     "name" => $participant->name,
-                    // "gamertag" => $participant->gamertag,
+                    "gamertag" => $participant->gamertag,
                     "email" => $participant->email,
                     "event_id" => $tournament,
                     "lan_id" => $event
