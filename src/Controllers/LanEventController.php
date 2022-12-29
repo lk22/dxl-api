@@ -191,6 +191,7 @@
 
                 $has_companion = $request->get_param('companion_checked');
                 $companion = $request->get_param('companion_data');
+                
 
                 $breakfast = $request->get_param("breakfast");
                 $dinner_friday = $request->get_param("dinner_friday");
@@ -275,6 +276,7 @@
                 $eventId    = $request->get_param('event');
                 $memberId   = $request->get_param('member');
                 $message    = $request->get_param('messageValue') ?? "";
+                $eventService = new EventService();
 
                 $member = $this->memberRepository
                     ->select()
@@ -328,8 +330,10 @@
                     return $this->api->conflict("Der skete en fejl, kunne ikke afmelde dig begivenheden");
                 }
 
+                $seats_updated = $eventService->addAvailableSeat($request->get_param("event"));
+
                 $this->lanRepository->update([
-                    "participants_count" => $event->participants_count - 1
+                    "participants_count" => $event->participants_count - 1,
                 ], $event->id);
 
                 // notify event manager
@@ -370,7 +374,7 @@
                 $participated = $this->participantRepository->create([
                     "member_id" => $participant->id,
                     "name" => $participant->name,
-                    "gamertag" => $participant->gamertag,
+                    // "gamertag" => $participant->gamertag,
                     "email" => $participant->email,
                     "event_id" => $tournament,
                     "lan_id" => $event
