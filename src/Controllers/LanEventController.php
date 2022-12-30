@@ -455,6 +455,7 @@
                 $member = $this->memberRepository->find($participantID);
 
                 $updatedFoodOrder = $wpdb->update($wpdb->prefix . "lan_participants", [
+                    "food_ordered" => 1,
                     "has_friday_breakfast" => (isset($foodOrder["has_friday_breakfast"])) ? 1 : 0,
                     "has_saturday_breakfast" => (isset($foodOrder["has_saturday_breakfast"])) ? 1 : 0,
                     "has_saturday_lunch" => (isset($foodOrder["has_saturday_lunch"])) ? 1 : 0,
