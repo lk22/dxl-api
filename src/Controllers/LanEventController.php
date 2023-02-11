@@ -201,7 +201,7 @@
 
                 $lanEvent = $this->lanRepository->find($request->get_param('event'));
 
-                $eventTermsAccepted = ($request->get_param('event_terms_accepted') == "on") ? 1 : 0;
+                $eventTermsAccepted = $request->get_param('event_terms_accepted');
 
                 if( $participantExists ) {
                     return $this->api->conflict("Du er allerede tilmeldt denne begivenhed");
