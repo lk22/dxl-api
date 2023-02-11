@@ -229,6 +229,7 @@
                     "has_saturday_dinner" => $dinner_saturday,
                     "participated" => time(),
                     "event_terms_accepted" => $eventTermsAccepted,
+                    "seat_companions" => json_encode($seatedMembers),
                 ]);
                 
                 if( !$participant ) {
