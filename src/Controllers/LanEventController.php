@@ -188,11 +188,8 @@
                 $memberService = new MemberService();
                 
                 $seatedMembers = $request->get_param('members') ?? [];
-
                 $has_companion = $request->get_param('companion_checked');
                 $companion = $request->get_param('companion_data');
-                
-
                 $breakfast = $request->get_param("breakfast");
                 $dinner_friday = $request->get_param("dinner_friday");
                 $dinner_saturday = $request->get_param("dinner_saturday");
@@ -203,6 +200,8 @@
                 );
 
                 $lanEvent = $this->lanRepository->find($request->get_param('event'));
+
+                $eventTermsAccepted = ($request->get_param('event_terms_accepted') == "on") ? 1 : 0;
 
                 if( $participantExists ) {
                     return $this->api->conflict("Du er allerede tilmeldt denne begivenhed");
@@ -246,7 +245,7 @@
                     $lanEvent, 
                     $seatedMembers, 
                     $request->get_param('message'),
-                    $companion
+                    $companion,
                 ))->setSubject('Tilmelding ' . $member->gamertag . ')')
                     ->setReciever($member->email)
                     ->send();
@@ -256,7 +255,8 @@
                     $lanEvent, 
                     $seatedMembers, 
                     $request->get_param('message'),
-                    $companion
+                    $companion,
+                    $eventTermsAccepted
                 ))->setSubject("Ny tilmelding, " . $member->gamertag)
                     ->setReciever("medlemskab@danishxboxleague.dk")
                     ->send();
