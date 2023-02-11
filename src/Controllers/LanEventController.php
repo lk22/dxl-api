@@ -227,7 +227,8 @@
                     "has_sunday_breakfast" => $breakfast,
                     "has_friday_lunch" => $dinner_friday,
                     "has_saturday_dinner" => $dinner_saturday,
-                    "participated" => time()
+                    "participated" => time(),
+                    "event_terms_accepted" => $eventTermsAccepted,
                 ]);
                 
                 if( !$participant ) {
