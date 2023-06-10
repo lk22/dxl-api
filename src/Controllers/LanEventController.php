@@ -60,6 +60,11 @@
              */
             protected $tournamentRepository;
 
+            /**
+             * Tournament settings repository
+             *
+             * @var DxlEvents\Classes\Repositories\TournamentSettingRepository
+             */
             protected $TournamentSettingRepository;
 
             /**
@@ -83,8 +88,25 @@
              */
             protected $memberRepository;
 
+            /**
+             * Game repository
+             *
+             * @var DxlEvents\Classes\Repositories\GameRepository
+             */
             protected $gameRepository;
+
+            /**
+             * GameTypeRepository
+             *
+             * @var DxlEvents\Classes\Repositories\GameTypeRepository
+             */
             protected $gameTypeRepository;
+
+            /**
+             * Game Mode repository
+             *
+             * @var DxlEvents\Classes\Repositories\GameModeRepository
+             */
             protected $gameModeRepository;
 
             /**
@@ -189,7 +211,9 @@
                 
                 $seatedMembers = $request->get_param('members') ?? [];
                 $has_companion = $request->get_param('companion_checked');
+                $workChoresCheked = $request->get_param('participant_work_checked');
                 $companion = $request->get_param('companion_data');
+                $workchores = $request->get_param('workChore');
                 $breakfast = $request->get_param("breakfast");
                 $dinner_friday = $request->get_param("dinner_friday");
                 $dinner_saturday = $request->get_param("dinner_saturday");
@@ -248,6 +272,8 @@
                     $seatedMembers, 
                     $request->get_param('message'),
                     $companion,
+                    $workChoresCheked,
+                    $workchores
                 ))->setSubject('Tilmelding ' . $member->gamertag . ')')
                     ->setReciever($member->email)
                     ->send();
