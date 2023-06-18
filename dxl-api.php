@@ -30,4 +30,34 @@ add_filter('jwt_auth_token_before_dispatch', 'add_user_id_to_jwt', 10, 2);
 
 new Api();
 
+add_action("rest_api_init", function () {
+
+   register_rest_route(
+         "MyPlugin/v1"
+       , "/pages/(?P<id>\d+)/contentElementor"
+       , [
+           "methods" => "GET",
+           "callback" => function (\WP_REST_Request $req) {
+
+               $contentElementor = "";
+
+               if (class_exists("\\Elementor\\Plugin")) {
+                  // return "test";
+                   $post_ID = $req->get_param("id");
+
+                   $pluginElementor = \Elementor\Plugin::instance();
+                   $contentElementor = $pluginElementor->frontend->get_builder_content($post_ID);
+                   return $contentElementor;
+               }
+
+
+               return $contentElementor;
+
+           },
+       ]
+   );
+
+
+});
+
 ?>

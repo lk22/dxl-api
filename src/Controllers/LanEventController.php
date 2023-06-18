@@ -213,8 +213,8 @@
                 $has_companion = $request->get_param('companion_checked');
                 $workChoresCheked = $request->get_param('participant_work_checked');
                 $companion = $request->get_param('companion_data');
-                $workchores = $request->get_param('workChore');
-                $breakfast = $request->get_param("breakfast");
+                $workchores = $request->get_param('workchores');
+                $breakfast = 1;
                 $dinner_friday = $request->get_param("dinner_friday");
                 $dinner_saturday = $request->get_param("dinner_saturday");
 
@@ -249,8 +249,8 @@
                     "has_saturday_breakfast" => $breakfast,
                     "has_sunday_breakfast" => $breakfast,
                     "has_sunday_breakfast" => $breakfast,
-                    "has_friday_lunch" => $dinner_friday,
-                    "has_saturday_dinner" => $dinner_saturday,
+                    "has_friday_lunch" => 0,
+                    "has_saturday_dinner" => 0,
                     "participated" => time(),
                     "event_terms_accepted" => $eventTermsAccepted,
                     "seat_companions" => json_encode($seatedMembers),
