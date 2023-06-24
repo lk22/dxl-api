@@ -1,0 +1,27 @@
+name: DXL API deployment
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup SSH keys
+      uses: webfactory/ssh-agent@v0.5.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Deploy
+      run: |
+        ssh -o StrictHostKeyChecking=no -A -tt -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
+        cd ${{ secrets.SSH_PATH }}
+        git pull
+        EOF
+
