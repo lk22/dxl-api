@@ -13,17 +13,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup GitHub SSH
-      uses: MrSquaare/ssh-setup-action@v2
-      with:
-        host: linux279.unoeuro.com
-        private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-    
     - name: Install sshpass
       run: |
         sudo apt-get update
         sudo apt-get install sshpass
+
+    - name: Create SSH Key
+      run: |
+        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
     
     - name: Deploy to Simply.com
       run: |  
-        cd staging/wp-content/plugins/dxl-api && git pull
+        sshpass -p zpmt5dhg ssh -i ~/.ssh/id_rsa linux279.unoeuro.com "cd staging/wp-contnet/plugins/dxl-api && git pull"
