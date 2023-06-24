@@ -20,5 +20,4 @@ jobs:
     
     - name: Deploy to Simply.com
       run: |
-        touch id_rsa && touch known_hosts && echo ${{ secrets.SSH_PRIVATE_KEY }} > id_rsa.pem && chmod 600 id_rsa.pem && ssh-keyscan -t rsa linux279.unoeuro.com >> known_hosts
-        sshpass -p zpmt5dhg ssh -i ~/id_rsa.pem danishxboxleagu.dk@linux279.unoeuro.com 'cd staging/wp-content/plugins/dxl-api && git pull'
+        echo ${{ secrets.SSH_PRIVATE_KEY }} > ~/.ssh/id_rsa.pem && sshpass -p zpmt5dhg ssh -i ~/id_rsa.pem danishxboxleagu.dk@linux279.unoeuro.com 'cd staging/wp-content/plugins/dxl-api && git pull'
