@@ -15,7 +15,7 @@ jobs:
 
     - name: Deploy
       run: |
-        ssh -i ${{ SSH_PRIVATE_KEY }} danishxboxleagu.dk@linux279.unoeuro.com << EOF
+        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} danishxboxleagu.dk@linux279.unoeuro.com << EOF
         cd staging/wp-content/plugins/dxl-api
         git pull
         EOF
