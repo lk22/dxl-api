@@ -13,9 +13,20 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.1
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Save private key to file
+      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa.pem
+    
+    - name: Set permissions for private key file
+      run: chmod 600 id_rsa.pem
+
     - name: Deploy
       run: |
-        ssh -i ${{ secrets.SSH_PRIVATE_KEY }} danishxboxleagu.dk@linux279.unoeuro.com << EOF
+        ssh -i id_rsa.pem danishxboxleagu.dk@linux279.unoeuro.com << EOF
         cd staging/wp-content/plugins/dxl-api
         git pull
         EOF
