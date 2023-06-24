@@ -22,8 +22,8 @@ jobs:
       run: |
         mkdir ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./id_rsa
-        chmod 600 id_rsa
-        cp id_rsa id_rsa.pem
+        chmod 600 ./id_rsa
+        cp ./id_rsa ./id_rsa.pem
         ssh-keyscan linux279.unoeuro.com >> ~/.ssh/known_hosts
     
     - name: Deploy to Simply.com
