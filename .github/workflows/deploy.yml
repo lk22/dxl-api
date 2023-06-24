@@ -21,10 +21,9 @@ jobs:
     - name: Configure SSH
       run: |
         mkdir ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa 
-        cp ~/.ssh/id_rsa ~/.ssh/id_rsa.pem
-        ssh-keyscan <server-address> >> ~/.ssh/known_hosts
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa.pem
+        chmod 600 ~/.ssh/id_rsa.pem
+        ssh-keyscan linux279.unoeuro.com >> ~/.ssh/known_hosts
     
     - name: Deploy to Simply.com
       run: |
