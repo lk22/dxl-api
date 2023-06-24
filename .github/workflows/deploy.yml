@@ -13,6 +13,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Install SSHPASS
+      run: sudo apt-get install sshpass
+
     - name: Setup SSH
       run: |
         mkdir -p ~/.ssh
@@ -22,4 +25,4 @@ jobs:
 
     - name: Deploy
       run: |
-        ssh -i ~/.ssh/id_rsa.pem danishxboxleagu.dk@linux279.unoeuro.com 'cd /staging/wp-content/plugins/dxl-api && git pull'
+        sshpass -p ${{ secrets.SSH_PASSWORD }} ssh danishxboxleagu.dk@linux279.unoeuro.com "cd /staging/wp-content/plugins/dxl-api && git pull"
