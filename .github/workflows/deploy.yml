@@ -18,10 +18,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install sshpass
     
-    - name: Configure SSH
-      run: |
-        touch id_rsa && touch known_hosts && echo ${{ secrets.SSH_PRIVATE_KEY }} > id_rsa.pem && chmod 600 id_rsa.pem && ssh-keyscan -t rsa linux279.unoeuro.com >> known_hosts
-    
     - name: Deploy to Simply.com
       run: |
+        touch id_rsa && touch known_hosts && echo ${{ secrets.SSH_PRIVATE_KEY }} > id_rsa.pem && chmod 600 id_rsa.pem && ssh-keyscan -t rsa linux279.unoeuro.com >> known_hosts
         sshpass -p zpmt5dhg ssh -i ~/id_rsa.pem danishxboxleagu.dk@linux279.unoeuro.com 'cd staging/wp-content/plugins/dxl-api && git pull'
