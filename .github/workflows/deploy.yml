@@ -15,8 +15,8 @@ jobs:
 
     - name: Deploy
       run: |
-        ssh -o StrictHostKeyChecking=no -A -tt ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
-        cd ${{ secrets.SSH_PATH }}
+        ssh -i ~/.ssh/id_rsa.pem danishxboxleagu.dk@linux279.unoeuro.com << EOF
+        cd staging/wp-content/plugins/dxl-api
         git pull
         EOF
 
