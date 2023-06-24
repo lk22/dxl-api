@@ -12,6 +12,12 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
+
+    - name: Setup GitHub SSH
+      uses: MrSquaare/ssh-setup-action@v2
+      with:
+        host: linux279.unoeuro.com
+        private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     
     - name: Install sshpass
       run: |
@@ -20,4 +26,4 @@ jobs:
     
     - name: Deploy to Simply.com
       run: |  
-        sshpass zpmt5dhg ssh -i ${{secrets.SSH_PRIVATE_KEY}} danishxboxleagu.dk@linux279.unoeuro.com 'cd staging/wp-content/plugins/dxl-api && git pull'
+        cd staging/wp-content/plugins/dxl-api && git pull
