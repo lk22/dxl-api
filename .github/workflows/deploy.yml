@@ -3,7 +3,7 @@ name: Deploy to Simply.com
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
@@ -29,4 +29,3 @@ jobs:
     - name: Deploy to Simply.com
       run: |
         sshpass -p zpmt5dhg ssh -i ~/.ssh/id_rsa.pem danishxboxleagu.dk@linux279.unoeuro.com 'cd /staging/wp-content/plugins/dxl-api && git pull'
-        
