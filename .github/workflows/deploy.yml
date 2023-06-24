@@ -20,7 +20,7 @@ jobs:
     
     - name: Configure SSH
       run: |
-        touch id_rsa && echo ${{ secrets.SSH_PRIVATE_KEY }} > id_rsa.pem && chmod 600 id_rsa.pem && ssh-keyscan -t rsa linux279.unoeuro.com >> ~/.ssh/known_hosts
+        touch id_rsa && touch known_hosts && echo ${{ secrets.SSH_PRIVATE_KEY }} > id_rsa.pem && chmod 600 id_rsa.pem && ssh-keyscan -t rsa linux279.unoeuro.com >> known_hosts
     
     - name: Deploy to Simply.com
       run: |
