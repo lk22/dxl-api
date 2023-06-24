@@ -20,4 +20,6 @@ jobs:
     
     - name: Deploy to Simply.com
       run: |
-        echo ${{ secrets.SSH_PRIVATE_KEY }} > ~/.ssh/id_rsa.pem && find ~/.ssh 
+        echo ${{ secrets.SSH_PRIVATE_KEY }} > ~/.ssh/id_rsa.pem 
+        chmod 600 ~/.ssh/id_rsa.pem
+        sshpass -p ${{ secrets.SSH_PASSWORD }} sshpass zpmt5dhg ssh -i ~/.ssh/id_rsa.pem danishxboxleagu.dk@linux279.unoeuro.com 'cd staging/wp-content/plugins/dxl-api && git pull'
