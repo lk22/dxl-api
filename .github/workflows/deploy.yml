@@ -26,4 +26,4 @@ jobs:
     
     - name: Deploy to Simply.com
       run: |  
-        sshpass -p ${{secrets.SSH_PASSWORD}} ssh -oStrictHostKeyChecking=no danishxboxleagu.dk@linux279.unoeuro.com "cd staging/wp-content/plugins/dxl-api && git pull"
+      sshpass -p ${{secrets.SSH_PASSWORD}} ssh -oStrictHostKeyChecking=no ${{secrets.SSH_USERNAME}}@${{secrets.SSH_HOSTNAME}} "cd staging/wp-content/plugins/dxl-api && git pull"
