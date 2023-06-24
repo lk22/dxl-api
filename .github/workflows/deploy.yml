@@ -19,8 +19,5 @@ jobs:
         sudo apt-get install sshpass
     
     - name: Deploy to Simply.com
-      run: |
-        
-        echo ${{ secrets.SSH_PRIVATE_KEY }} > ./id_rsa.pem 
-        chmod 600 ./id_rsa
-        sshpass -p ${{ secrets.SSH_PASSWORD }} sshpass zpmt5dhg ssh -i ./id_rsa.pem danishxboxleagu.dk@linux279.unoeuro.com 'cd staging/wp-content/plugins/dxl-api && git pull'
+      run: |  
+        echo ${{ secrets.SSH_PRIVATE_KEY }} > id_rsa.pem && chmod 600 id_rsa && sshpass -p ${{ secrets.SSH_PASSWORD }} sshpass zpmt5dhg ssh -i id_rsa danishxboxleagu.dk@linux279.unoeuro.com 'cd staging/wp-content/plugins/dxl-api && git pull'
