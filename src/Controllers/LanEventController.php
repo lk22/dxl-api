@@ -209,11 +209,12 @@
                 $eventService = new EventService();
                 $memberService = new MemberService();
                 
+                // return $this->api->success($request->get_params());
                 $seatedMembers = $request->get_param('members') ?? [];
                 $has_companion = $request->get_param('companion_checked');
                 $workChoresCheked = $request->get_param('participant_work_checked');
                 $companion = $request->get_param('companion_data');
-                $workchores = $request->get_param('workchores');
+                $workchores = $request->get_param('work') ?? [];
                 $breakfast = 1;
                 $dinner_friday = $request->get_param("dinner_friday");
                 $dinner_saturday = $request->get_param("dinner_saturday");
@@ -254,6 +255,7 @@
                     "participated" => time(),
                     "event_terms_accepted" => $eventTermsAccepted,
                     "seat_companions" => json_encode($seatedMembers),
+                    "workchores" => json_encode($workchores),
                 ]);
                 
                 if( !$participant ) {
@@ -269,11 +271,11 @@
                 $participantMail = (new EventParticipatedMail(
                     $member, 
                     $lanEvent, 
-                    $seatedMembers, 
-                    $request->get_param('message'),
-                    $companion,
                     $workChoresCheked,
-                    $workchores
+                    $workchores,
+                    $seatedMembers, 
+                    $companion,
+                    $request->get_param('message'),
                 ))->setSubject('Tilmelding ' . $member->gamertag . ')')
                     ->setReciever($member->email)
                     ->send();
@@ -282,9 +284,9 @@
                     $member, 
                     $lanEvent, 
                     $seatedMembers, 
-                    $request->get_param('message'),
                     $companion,
-                    $eventTermsAccepted
+                    $eventTermsAccepted,
+                    $request->get_param('message'),
                 ))->setSubject("Ny tilmelding, " . $member->gamertag)
                     ->setReciever("medlemskab@danishxboxleague.dk")
                     ->send();
