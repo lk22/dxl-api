@@ -209,12 +209,11 @@
                 $eventService = new EventService();
                 $memberService = new MemberService();
                 
-                // return $this->api->success($request->get_params());
                 $seatedMembers = $request->get_param('members') ?? [];
                 $has_companion = $request->get_param('companion_checked');
                 $workChoresCheked = $request->get_param('participant_work_checked');
                 $companion = $request->get_param('companion_data');
-                $workchores = $request->get_param('work') ?? [];
+                $workchores = $request->get_param('work');
                 $breakfast = 1;
                 $dinner_friday = $request->get_param("dinner_friday");
                 $dinner_saturday = $request->get_param("dinner_saturday");
@@ -255,7 +254,7 @@
                     "participated" => time(),
                     "event_terms_accepted" => $eventTermsAccepted,
                     "seat_companions" => json_encode($seatedMembers),
-                    "workchores" => json_encode($workchores),
+                    "workchores" => json_encode($workchores["items"]),
                 ]);
                 
                 if( !$participant ) {
