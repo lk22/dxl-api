@@ -282,9 +282,9 @@
                 $participantNotification = (new LanEventParticipatedMail(
                     $member, 
                     $lanEvent, 
-                    $seatedMembers, 
+                  	$eventTermsAccepted,  
+                  	$seatedMembers, 
                     $companion,
-                    $eventTermsAccepted,
                     $request->get_param('message'),
                 ))->setSubject("Ny tilmelding, " . $member->gamertag)
                     ->setReciever("medlemskab@danishxboxleague.dk")
