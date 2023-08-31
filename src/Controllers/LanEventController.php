@@ -31,6 +31,7 @@
     use DxlEvents\Classes\Mails\LanEventUnparticipated;
     use DxlEvents\Classes\Mails\EventUnparticipated;
     use DxlEvents\Classes\Mails\LanEventFoodOrderUpdate;
+    use DxlEvents\Classes\Mails\LanEventFoodOrderParticipant;
 
     /**
      * Exceptions
@@ -500,6 +501,11 @@
                 $foodOrderUpdateMail = (new LanEventFoodOrderUpdate($foodOrder, $member, $note))
                     ->setSubject("Lan Deltager " . $member->name . " mad bestilling")
                     ->setReciever('medlemskab@danishxboxleague.dk')
+                    ->send();
+
+                $participantFoodOrderUpdate = (new LanEventFoodOrderParticipant($foodOrder, $member, $note))
+                    ->setSubject("Mad bestilling: " . $member->name)
+                    ->setReciever($member->email)
                     ->send();
                     
                 return $this->api->success("Dine mad ønsker er nu registreret, du vil modtage en faktura snarest for din mad bestilling");
