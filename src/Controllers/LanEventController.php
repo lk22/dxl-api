@@ -215,7 +215,7 @@
                 $workChoresCheked = $request->get_param('participant_work_checked');
                 $companion = $request->get_param('companion_data');
                 $workchores = $request->get_param('work');
-                $breakfast = 1;
+                $breakfast = 0;
                 $dinner_friday = $request->get_param("dinner_friday");
                 $dinner_saturday = $request->get_param("dinner_saturday");
 
