@@ -480,6 +480,7 @@
                 global $wpdb;
                 $participantID = $request->get_param('participant');
                 $foodOrder = $request->get_param('foodOrder');
+                $foodOrderingForCompanion = $request->get_param('foodOrderedForCompanion');
                 $note = $request->get_param('foodOrderNote');
 
                 $member = $this->memberRepository->find($participantID);
@@ -498,12 +499,12 @@
                 }
 
                 // send new mail to event handler about participant food order update
-                $foodOrderUpdateMail = (new LanEventFoodOrderUpdate($foodOrder, $member, $note))
+                $foodOrderUpdateMail = (new LanEventFoodOrderUpdate($foodOrder, $foodOrderingForCompanion, $member, $note))
                     ->setSubject("Lan Deltager " . $member->name . " mad bestilling")
                     ->setReciever('medlemskab@danishxboxleague.dk')
                     ->send();
 
-                $participantFoodOrderUpdate = (new LanEventFoodOrderParticipant($foodOrder, $member, $note))
+                $participantFoodOrderUpdate = (new LanEventFoodOrderParticipant($foodOrder, $foodOrderingForCompanion, $member, $note))
                     ->setSubject("Mad bestilling: " . $member->name)
                     ->setReciever($member->email)
                     ->send();
