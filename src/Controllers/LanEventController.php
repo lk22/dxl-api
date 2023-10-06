@@ -480,7 +480,7 @@
                 global $wpdb;
                 $participantID = $request->get_param('participant');
                 $foodOrder = $request->get_param('foodOrder');
-                $foodOrderingForCompanion = $request->get_param('foodOrderedForCompanion');
+                $foodOrderingForCompanion = $request->get_param('foodOrderedForCompanion'); 
                 $note = $request->get_param('foodOrderNote');
 
                 $member = $this->memberRepository->find($participantID);
