@@ -511,5 +511,40 @@
                     
                 return $this->api->success("Dine mad ønsker er nu registreret, du vil modtage en faktura snarest for din mad bestilling");
             }
+
+            /**
+             * Updating work chores endpoint
+             *
+             * @param \WP_REST_Request $request
+             * @return void
+             */
+            public function updateWorkChores(\WP_REST_Request $request)
+            {
+                global $wpdb;
+                $parameters = $request->get_params();
+                if ( ! empty($parameters["event"]) ) {
+                    return $this->api->notFound("Event not found in request object, cannot process request");
+                }
+
+                if ( ! empty($parameters["participant"]) ) {
+                    return $this->api->notFound("Participant ID not found in request object, cannot process request")
+                }
+
+                $event = $this->lanRepository->find($parameters["event"]);
+                $participant = $this->participantRepository->find($parameters["participant"]);
+
+                $updated = $this->lanParticipantRepository->update([
+                    "workchores" => json_encode($workchores["items"])
+                ], $participant->id);
+
+                if ( ! $updated ) {
+                    return $this->api->conflict("Noget gik galt, kunne ikke opdatere dine arbejdsopgaver");
+                }
+
+                // TODO: send mail to chairman about work chores update
+                // TODO: send mail to participant about work chores update
+
+                return $this->api->success("Dine arbejdsopgaver er nu opdateret");
+            }
         }
     }

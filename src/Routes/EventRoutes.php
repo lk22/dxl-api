@@ -58,6 +58,11 @@
                     'callback' => [new LanEventController, 'updateFoodOrder']
                 ]);
 
+                register_rest_route($this->prefix, 'event/lan/updateWorkChores', [
+                    'methods' => \WP_REST_Server::EDITABLE,
+                    'callback' => [new LanEventController, 'updateWorkChores']
+                ]);
+
                 register_rest_route($this->prefix, '/event/lan/tournament/participate', [
                     'methods' => \WP_REST_Server::CREATABLE,
                     'callback' => [new LanEventController, 'participateTournament']
