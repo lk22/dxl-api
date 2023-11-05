@@ -32,6 +32,8 @@
     use DxlEvents\Classes\Mails\EventUnparticipated;
     use DxlEvents\Classes\Mails\LanEventFoodOrderUpdate;
     use DxlEvents\Classes\Mails\LanEventFoodOrderParticipant;
+    use DxlEvents\Classes\Mails\LanWorkChoresUpdated;
+    use DxlEvents\Classes\Mails\ParticipantWorkChoresUpdated;
 
     /**
      * Exceptions
@@ -522,27 +524,45 @@
             {
                 global $wpdb;
                 $parameters = $request->get_params();
-                if ( ! empty($parameters["event"]) ) {
-                    return $this->api->notFound("Event not found in request object, cannot process request");
+                $event = $parameters["event"];
+                $member = $parameters["participant"];
+                $fields = $parameters["fields"];
+
+                if ( empty($event) ) {
+                    return $this->api->not_found(["message" => "Event not found in requuest object"]);
                 }
 
-                if ( ! empty($parameters["participant"]) ) {
-                    return $this->api->notFound("Participant ID not found in request object, cannot process request")
+                if ( empty($member) ) {
+                    return $this->api->not_found(["message" => "Participant Identifier not found in request object"]);
+                }
+
+                if ( ! count($fields) ) {
+                    return $this->api->not_found(["message" => "No fields to update"]);
                 }
 
                 $event = $this->lanRepository->find($parameters["event"]);
-                $participant = $this->participantRepository->find($parameters["participant"]);
+                $participant = $this->lanParticipantRepository->find($member);
+                $member = $this->memberRepository->select()->where('id', $participant->member_id)->getRow();
+                // return $member;
 
                 $updated = $this->lanParticipantRepository->update([
-                    "workchores" => json_encode($workchores["items"])
+                    "workchores" => json_encode($fields)
                 ], $participant->id);
 
                 if ( ! $updated ) {
-                    return $this->api->conflict("Noget gik galt, kunne ikke opdatere dine arbejdsopgaver");
+                    return $this->api->conflict("Der fandtes ingen ændringer i dine arbejdsopgaver, kunne ikke opdatere arbejdsopgaver");
                 }
 
                 // TODO: send mail to chairman about work chores update
+                $participantMail = (new LanWorkChoresUpdated($participant, $event, $fields))
+                    ->setSubject("Arbejdsopgaver opdateret, " . $participant->name)
+                    ->setReciever("medlemsskab@danishxboxleague.dk")
+                    ->send();
                 // TODO: send mail to participant about work chores update
+                $participantMail = (new ParticipantWorkChoresUpdated($participant, $event, $fields))
+                    ->setSubject("Arbejdsopgaver opdateret, " . $participant->name)
+                    ->setReciever($member->email)
+                    ->send();
 
                 return $this->api->success("Dine arbejdsopgaver er nu opdateret");
             }
