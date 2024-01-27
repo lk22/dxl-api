@@ -24,6 +24,12 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         cp ~/.ssh/id_rsa ~/.ssh/id_rsa.pem
     
-    - name: Deploy to Simply.com
-      run: |  
-        sshpass -p ${{secrets.SSH_PASSWORD}} ssh -oStrictHostKeyChecking=no ${{secrets.SSH_USERNAME}}@${{secrets.SSH_HOSTNAME}} "cd staging/wp-content/plugins/dxl-api && git pull"
+    - name: Pull changes from Staging branch
+      if: ${{ github.ref == 'refs/heads/staging' }}
+      run: |
+        sshpass -p ${{secrets.SSH_PASSWORD}} ssh -oStrictHostKeyChecking=no ${{secrets.SSH_USERNAME}}@${{secrets.SSH_HOSTNAME}} "cd staging/wp-content/plugins/dxl-api && git pull origin staging"
+
+    - name: Pull changes from Master branch
+      if: ${{ github.ref == 'refs/heads/master' }}
+      run: |
+        sshpass -p ${{secrets.SSH_PASSWORD}} ssh -oStrictHostKeyChecking=no ${{secrets.SSH_USERNAME}}@${{secrets.SSH_HOSTNAME}} "cd public_html/wp-content/plugins/dxl-api && git pull"
