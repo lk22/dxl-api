@@ -240,6 +240,10 @@
 
                 $member = $this->memberRepository->select()->where('gamertag', "'$gamertag'")->getRow();
 
+                if ( ! $member->is_payed ) {
+                    return $this->api->conflict('Kunne ikke tilmelde dig, mangler aktivt kontingent');
+                }
+
                 $participant = $this->lanParticipantRepository->create([
                     "event_id" => $request->get_param('event'),
                     "member_id" => $member->id,
